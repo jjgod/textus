@@ -12,10 +12,10 @@ int hexNum(char ch)
 {
     if (ch >= '0' && ch <= '9')
         return ch - '0';
-    
+
     if (ch >= 'A' && ch <= 'F')
         return ch - 'A' + 10;
-    
+
     if (ch >= 'a' && ch <= 'f')
         return ch - 'a' + 10;
 
@@ -40,7 +40,7 @@ NSColor *decodeColor(NSString *colorString)
 
 NSString *encodeColor(NSColor *color)
 {
-    return [NSString stringWithFormat: @"#%02X%02X%02X", 
+    return [NSString stringWithFormat: @"#%02X%02X%02X",
             (int) ([color redComponent] * 255.0),
             (int) ([color greenComponent] * 255.0),
             (int) ([color blueComponent] * 255.0)];
@@ -53,14 +53,14 @@ NSString *encodeColor(NSColor *color)
 	NSMutableDictionary *appDefaults = [NSMutableDictionary dictionary];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-    [appDefaults setValue: @"#000000" forKey: @"foregroundColor"];    
+    [appDefaults setValue: @"#000000" forKey: @"foregroundColor"];
     [appDefaults setValue: @"#FFFFFF" forKey: @"backgroundColor"];
     [appDefaults setValue: @"STKaiti" forKey: @"fontName"];
     [appDefaults setValue: [NSNumber numberWithDouble: 14.0] forKey: @"fontSize"];
     [appDefaults setValue: [NSNumber numberWithDouble: 16.0] forKey: @"lineHeight"];
 
 	[defaults registerDefaults: appDefaults];
-    [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues: appDefaults];    
+    [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues: appDefaults];
     [[NSColorPanel sharedColorPanel] setShowsAlpha: YES];
 }
 
@@ -99,27 +99,22 @@ NSString *encodeColor(NSColor *color)
     [[NSUserDefaults standardUserDefaults] setValue: encodeColor(color) forKey: @"backgroundColor"];
 }
 
-- (NSString *) fontDescription
+- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *) sender
 {
-    return [NSString stringWithFormat: @"%@, %g pt", 
-                [[NSUserDefaults standardUserDefaults] objectForKey: @"fontName"],
-                [[NSUserDefaults standardUserDefaults] doubleForKey: @"fontSize"]];
+    return NO;
 }
 
 - (void) changeFont: (id) sender
 {
     NSFont *oldFont = [self font];
     NSFont *newFont = [sender convertFont: oldFont];
-
+    
     NSLog(@"changeFont = %@", newFont);
 
     [[NSUserDefaults standardUserDefaults] setValue: [newFont fontName] forKey: @"fontName"];
     [[NSUserDefaults standardUserDefaults] setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
-}
-
-- (BOOL) applicationShouldOpenUntitledFile: (NSApplication *) sender
-{
-    return NO;
+    
+    [super changeFont: sender];
 }
 
 @end

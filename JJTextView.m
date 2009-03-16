@@ -7,23 +7,57 @@
 //
 
 #import "JJTextView.h"
+#import "JJTypesetter.h"
 
 @implementation JJTextView
 
 - (void) awakeFromNib
 {
-    [[NSApp delegate] addObserver:self
-                       forKeyPath:@"backgroundColor"
-                          options:0
-                          context:nil];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:@"backgroundColor"
+                                               options:0
+                                               context:nil];
+
+    [[NSUserDefaults standardUserDefaults] addObserver: self
+                                            forKeyPath: @"lineHeight"
+                                               options: 0
+                                               context: nil];
+    
+    NSLayoutManager *lm = [self layoutManager];
+    JJTypesetter *ts = [[JJTypesetter alloc] init];
+    [ts setLineHeight: [[NSUserDefaults standardUserDefaults] doubleForKey: @"fontSize"] +
+                       [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"]];
+    [lm setTypesetter: ts];
+    [ts release];
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+- (void) dealloc
 {
-    [self setBackgroundColor: [[NSApp delegate] backgroundColor]];
+    [[NSUserDefaults standardUserDefaults] removeObserver: self
+                                               forKeyPath: @"backgroundColor"];
+    [[NSUserDefaults standardUserDefaults] removeObserver: self
+                                               forKeyPath: @"lineHeight"];
+    
+    [super dealloc];
+}
+
+- (void) observeValueForKeyPath: (NSString *) keyPath
+                       ofObject: (id) object
+                         change: (NSDictionary *) change
+                        context: (void *) context
+{
+    if ([keyPath isEqual: @"backgroundColor"])
+        [self setBackgroundColor: [[NSApp delegate] backgroundColor]];
+    
+    else if ([keyPath isEqual: @"lineHeight"])
+    {
+        NSLayoutManager *lm = [self layoutManager];
+        JJTypesetter *ts = (JJTypesetter *) [lm typesetter];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        CGFloat lineHeight = [defaults doubleForKey: @"fontSize"] + [defaults doubleForKey: @"lineHeight"];
+        [ts setLineHeight: lineHeight];
+        [self setNeedsDisplay: YES];
+    }
 }
 
 - (void) scrollTo: (float) y
@@ -98,9 +132,15 @@
     }
 }
 
-- (BOOL) acceptsFirstResponder 
-{ 
-    return YES; 
-} 
+- (BOOL) acceptsFirstResponder
+{
+    return YES;
+}
+
+- (void) changeFont: (id) sender
+{
+    NSLog(@"changeFont");
+    [super changeFont: sender];
+}
 
 @end

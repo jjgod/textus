@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="100021"/>
+			<integer value="5"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -73,7 +73,7 @@
 														<bool key="EncodedWithXMLCoder">YES</bool>
 														<reference ref="98652895"/>
 													</object>
-													<int key="NSLMFlags">134</int>
+													<int key="NSLMFlags">6</int>
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="204884774"/>
@@ -225,7 +225,7 @@
 						<string key="label">fontName: values.fontName</string>
 						<reference key="source" ref="204884774"/>
 						<reference key="destination" ref="126067765"/>
-						<object class="NSNibBindingConnector" key="connector" id="336608856">
+						<object class="NSNibBindingConnector" key="connector" id="1067706865">
 							<reference key="NSSource" ref="204884774"/>
 							<reference key="NSDestination" ref="126067765"/>
 							<string key="NSLabel">fontName: values.fontName</string>
@@ -247,27 +247,11 @@
 							<string key="NSLabel">fontSize: values.fontSize</string>
 							<string key="NSBinding">fontSize</string>
 							<string key="NSKeyPath">values.fontSize</string>
-							<reference key="NSPreviousConnector" ref="336608856"/>
+							<reference key="NSPreviousConnector" ref="1067706865"/>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
 					<int key="connectionID">100032</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">textColor: delegate.foregroundColor</string>
-						<reference key="source" ref="204884774"/>
-						<reference key="destination" ref="796877042"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="204884774"/>
-							<reference key="NSDestination" ref="796877042"/>
-							<string key="NSLabel">textColor: delegate.foregroundColor</string>
-							<string key="NSBinding">textColor</string>
-							<string key="NSKeyPath">delegate.foregroundColor</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">100037</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -392,8 +376,8 @@
 					<string>JJTextView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{101, 151}, {804, 608}}</string>
-					<string>{{101, 151}, {804, 608}}</string>
+					<string>{{336, 248}, {804, 608}}</string>
+					<string>{{336, 248}, {804, 608}}</string>
 					<reference ref="9"/>
 					<string>{{201, 387}, {507, 413}}</string>
 					<reference ref="9"/>

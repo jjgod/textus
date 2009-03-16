@@ -820,13 +820,13 @@
 						<object class="NSTextField" id="995010602">
 							<reference key="NSNextResponder" ref="682563623"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 22}, {82, 17}}</string>
+							<string key="NSFrame">{{11, 22}, {88, 17}}</string>
 							<reference key="NSSuperview" ref="682563623"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="986725230">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Line Height:</string>
+								<string key="NSContents">Line Spacing:</string>
 								<reference key="NSSupport" ref="901208874"/>
 								<reference key="NSControlView" ref="995010602"/>
 								<reference key="NSBackgroundColor" ref="248392606"/>
@@ -840,7 +840,7 @@
 							<reference key="NSSuperview" ref="682563623"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="263672630">
-								<int key="NSCellFlags">-2075001280</int>
+								<int key="NSCellFlags">-1804468671</int>
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="901208874"/>
@@ -892,7 +892,7 @@
 				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
-			<object class="NSCustomObject" id="835939791">
+			<object class="NSCustomObject" id="105587900">
 				<string key="NSClassName">AppController</string>
 			</object>
 		</object>
@@ -1207,7 +1207,7 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="1050"/>
-						<reference key="destination" ref="835939791"/>
+						<reference key="destination" ref="105587900"/>
 					</object>
 					<int key="connectionID">482</int>
 				</object>
@@ -1215,10 +1215,10 @@
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: foregroundColor</string>
 						<reference key="source" ref="627857956"/>
-						<reference key="destination" ref="835939791"/>
+						<reference key="destination" ref="105587900"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="627857956"/>
-							<reference key="NSDestination" ref="835939791"/>
+							<reference key="NSDestination" ref="105587900"/>
 							<string key="NSLabel">value: foregroundColor</string>
 							<string key="NSBinding">value</string>
 							<string key="NSKeyPath">foregroundColor</string>
@@ -1231,10 +1231,10 @@
 					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: backgroundColor</string>
 						<reference key="source" ref="1062774073"/>
-						<reference key="destination" ref="835939791"/>
+						<reference key="destination" ref="105587900"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="1062774073"/>
-							<reference key="NSDestination" ref="835939791"/>
+							<reference key="NSDestination" ref="105587900"/>
 							<string key="NSLabel">value: backgroundColor</string>
 							<string key="NSBinding">value</string>
 							<string key="NSKeyPath">backgroundColor</string>
@@ -1917,7 +1917,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">481</int>
-						<reference key="object" ref="835939791"/>
+						<reference key="object" ref="105587900"/>
 						<reference key="parent" ref="1049"/>
 					</object>
 				</object>

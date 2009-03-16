@@ -24,6 +24,8 @@
                                                context: nil];
     
     NSLayoutManager *lm = [self layoutManager];
+    [self setTextContainerInset: NSMakeSize(20, 20)];
+    
     JJTypesetter *ts = [[JJTypesetter alloc] init];
     [ts setLineHeight: [[NSUserDefaults standardUserDefaults] doubleForKey: @"fontSize"] +
                        [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"]];
@@ -139,8 +141,20 @@
 
 - (void) changeFont: (id) sender
 {
-    NSLog(@"changeFont");
-    [super changeFont: sender];
+    NSFont *oldFont = [self font];
+    NSFont *newFont = [sender convertFont: oldFont];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    
+    NSLog(@"changeFont = %@", newFont);
+    
+    [defaults setValue: [newFont fontName] forKey: @"fontName"];
+    [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
+    
+    NSLayoutManager *lm = [self layoutManager];
+    JJTypesetter *ts = (JJTypesetter *) [lm typesetter];
+    CGFloat lineHeight = [defaults doubleForKey: @"fontSize"] + [defaults doubleForKey: @"lineHeight"];
+    [ts setLineHeight: lineHeight];
+    [self setNeedsDisplay: YES];    
 }
 
 @end

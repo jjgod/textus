@@ -113,8 +113,6 @@ NSString *encodeColor(NSColor *color)
 
     [[NSUserDefaults standardUserDefaults] setValue: [newFont fontName] forKey: @"fontName"];
     [[NSUserDefaults standardUserDefaults] setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
-    
-    [super changeFont: sender];
 }
 
 @end

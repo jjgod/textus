@@ -9,7 +9,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface MyDocument : NSDocument
+@interface TextDocument : NSDocument
 {
+    IBOutlet NSTextView *textView;
+    NSStringEncoding GB18030Encoding;
+    NSString *fileContents;
 }
+
 @end

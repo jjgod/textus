@@ -9,20 +9,22 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>????</string>
+				<string>txt</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
 			<string></string>
 			<key>CFBundleTypeName</key>
-			<string>DocumentType</string>
-			<key>CFBundleTypeOSTypes</key>
+			<string>plain text document</string>
+			<key>LSItemContentTypes</key>
 			<array>
-				<string>????</string>
+				<string>public.plain-text</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
-			<string>MyDocument</string>
+			<string>TextDocument</string>
+			<key>NSTypeName</key>
+			<string>Plain Text Format</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>

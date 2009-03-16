@@ -26,7 +26,7 @@
 		<object class="NSMutableArray" key="IBDocument.RootObjects" id="580458321">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSCustomObject" id="512844837">
-				<string key="NSClassName">MyDocument</string>
+				<string key="NSClassName">TextDocument</string>
 			</object>
 			<object class="NSCustomObject" id="613418571">
 				<string key="NSClassName">FirstResponder</string>
@@ -73,7 +73,7 @@
 														<bool key="EncodedWithXMLCoder">YES</bool>
 														<reference ref="98652895"/>
 													</object>
-													<int key="NSLMFlags">6</int>
+													<int key="NSLMFlags">134</int>
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="204884774"/>
@@ -81,7 +81,7 @@
 												<int key="NSTCFlags">1</int>
 											</object>
 											<object class="NSTextViewSharedData" key="NSSharedData">
-												<int key="NSFlags">11232</int>
+												<int key="NSFlags">27616</int>
 												<object class="NSColor" key="NSBackgroundColor" id="280078643">
 													<int key="NSColorSpace">3</int>
 													<bytes key="NSWhite">MQA</bytes>
@@ -136,7 +136,7 @@
 												<nil key="NSDefaultParagraphStyle"/>
 											</object>
 											<int key="NSTVFlags">6</int>
-											<string key="NSMaxSize">{1016, 1e+07}</string>
+											<string key="NSMaxSize">{1610, 1e+07}</string>
 											<string key="NSMinize">{223, 0}</string>
 											<nil key="NSDelegate"/>
 										</object>
@@ -192,11 +192,11 @@
 			<object class="NSCustomObject" id="796877042">
 				<string key="NSClassName">NSApplication</string>
 			</object>
-			<object class="NSUserDefaultsController" id="487346542">
+			<object class="NSUserDefaultsController" id="126067765">
 				<object class="NSMutableArray" key="NSDeclaredKeys">
 					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>font</string>
-					<string>foregroundColor</string>
+					<string>fontName</string>
+					<string>fontSize</string>
 				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
@@ -222,35 +222,60 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">font: values.font</string>
+						<string key="label">fontName: values.fontName</string>
 						<reference key="source" ref="204884774"/>
-						<reference key="destination" ref="487346542"/>
-						<object class="NSNibBindingConnector" key="connector">
+						<reference key="destination" ref="126067765"/>
+						<object class="NSNibBindingConnector" key="connector" id="336608856">
 							<reference key="NSSource" ref="204884774"/>
-							<reference key="NSDestination" ref="487346542"/>
-							<string key="NSLabel">font: values.font</string>
-							<string key="NSBinding">font</string>
-							<string key="NSKeyPath">values.font</string>
+							<reference key="NSDestination" ref="126067765"/>
+							<string key="NSLabel">fontName: values.fontName</string>
+							<string key="NSBinding">fontName</string>
+							<string key="NSKeyPath">values.fontName</string>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">100027</int>
+					<int key="connectionID">100031</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">textColor: values.foregroundColor</string>
+						<string key="label">fontSize: values.fontSize</string>
 						<reference key="source" ref="204884774"/>
-						<reference key="destination" ref="487346542"/>
+						<reference key="destination" ref="126067765"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="204884774"/>
-							<reference key="NSDestination" ref="487346542"/>
-							<string key="NSLabel">textColor: values.foregroundColor</string>
-							<string key="NSBinding">textColor</string>
-							<string key="NSKeyPath">values.foregroundColor</string>
+							<reference key="NSDestination" ref="126067765"/>
+							<string key="NSLabel">fontSize: values.fontSize</string>
+							<string key="NSBinding">fontSize</string>
+							<string key="NSKeyPath">values.fontSize</string>
+							<reference key="NSPreviousConnector" ref="336608856"/>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">100028</int>
+					<int key="connectionID">100032</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">textColor: delegate.foregroundColor</string>
+						<reference key="source" ref="204884774"/>
+						<reference key="destination" ref="796877042"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="204884774"/>
+							<reference key="NSDestination" ref="796877042"/>
+							<string key="NSLabel">textColor: delegate.foregroundColor</string>
+							<string key="NSBinding">textColor</string>
+							<string key="NSKeyPath">delegate.foregroundColor</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">100037</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">textView</string>
+						<reference key="source" ref="512844837"/>
+						<reference key="destination" ref="204884774"/>
+					</object>
+					<int key="connectionID">100038</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -329,7 +354,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">100025</int>
-						<reference key="object" ref="487346542"/>
+						<reference key="object" ref="126067765"/>
 						<reference key="parent" ref="0"/>
 					</object>
 				</object>
@@ -344,7 +369,9 @@
 					<string>100021.IBPluginDependency</string>
 					<string>100022.IBPluginDependency</string>
 					<string>100023.IBPluginDependency</string>
+					<string>100024.CustomClassName</string>
 					<string>100024.IBPluginDependency</string>
+					<string>100025.IBPluginDependency</string>
 					<string>5.IBEditorWindowLastContentRect</string>
 					<string>5.IBWindowTemplateEditedContentRect</string>
 					<string>5.ImportedFromIB2</string>
@@ -362,9 +389,11 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>JJTextView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{445, 220}, {804, 608}}</string>
-					<string>{{445, 220}, {804, 608}}</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>{{101, 151}, {804, 608}}</string>
+					<string>{{101, 151}, {804, 608}}</string>
 					<reference ref="9"/>
 					<string>{{201, 387}, {507, 413}}</string>
 					<reference ref="9"/>
@@ -393,17 +422,37 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">100028</int>
+			<int key="maxID">100038</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
 				<object class="IBPartialClassDescription">
-					<string key="className">MyDocument</string>
-					<string key="superclassName">NSDocument</string>
+					<string key="className">JJTextView</string>
+					<string key="superclassName">NSTextView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">MyDocument.h</string>
+						<string key="minorKey">JJTextView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TextDocument</string>
+					<string key="superclassName">NSDocument</string>
+					<object class="NSMutableDictionary" key="outlets">
+						<string key="NS.key.0">textView</string>
+						<string key="NS.object.0">NSTextView</string>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">TextDocument.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TextDocument</string>
+					<string key="superclassName">NSDocument</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBUserSource</string>
+						<string key="minorKey"/>
 					</object>
 				</object>
 			</object>

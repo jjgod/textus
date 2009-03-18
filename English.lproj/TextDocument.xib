@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="5"/>
+			<integer value="100021"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -73,7 +73,7 @@
 														<bool key="EncodedWithXMLCoder">YES</bool>
 														<reference ref="98652895"/>
 													</object>
-													<int key="NSLMFlags">6</int>
+													<int key="NSLMFlags">134</int>
 													<nil key="NSDelegate"/>
 												</object>
 												<reference key="NSTextView" ref="204884774"/>
@@ -193,11 +193,6 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSUserDefaultsController" id="126067765">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>fontName</string>
-					<string>fontSize</string>
-				</object>
 				<bool key="NSSharedInstance">YES</bool>
 			</object>
 		</object>

@@ -13,23 +13,19 @@
 
 - (void) awakeFromNib
 {
-    [[NSUserDefaults standardUserDefaults] addObserver:self
-                                            forKeyPath:@"backgroundColor"
-                                               options:0
-                                               context:nil];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", nil];
 
-    [[NSUserDefaults standardUserDefaults] addObserver: self
-                                            forKeyPath: @"lineHeight"
-                                               options: 0
-                                               context: nil];
-    
-    NSLayoutManager *lm = [self layoutManager];
+    for (NSString *keyPath in keyPaths)
+        [defaults addObserver: self
+                   forKeyPath: keyPath
+                      options: 0
+                      context: nil];
+
     [self setTextContainerInset: NSMakeSize(20, 20)];
-    
     JJTypesetter *ts = [[JJTypesetter alloc] init];
-    [ts setLineHeight: [[NSUserDefaults standardUserDefaults] doubleForKey: @"fontSize"] +
-                       [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"]];
-    [lm setTypesetter: ts];
+    [[self layoutManager] setTypesetter: ts];
+    [ts setLineGap: [defaults doubleForKey: @"lineHeight"]];
     [ts release];
 }
 
@@ -48,6 +44,8 @@
                          change: (NSDictionary *) change
                         context: (void *) context
 {
+    NSLog(@"keyPath = %@", keyPath);
+
     if ([keyPath isEqual: @"backgroundColor"])
         [self setBackgroundColor: [[NSApp delegate] backgroundColor]];
     
@@ -55,10 +53,12 @@
     {
         NSLayoutManager *lm = [self layoutManager];
         JJTypesetter *ts = (JJTypesetter *) [lm typesetter];
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        CGFloat lineHeight = [defaults doubleForKey: @"fontSize"] + [defaults doubleForKey: @"lineHeight"];
-        [ts setLineHeight: lineHeight];
-        [self setNeedsDisplay: YES];
+        [ts setLineGap: [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"]];
+        NSRange range = NSMakeRange(0, [[self textStorage] length]);
+
+        [lm invalidateLayoutForCharacterRange: range 
+                         actualCharacterRange: NULL];
+        [lm invalidateDisplayForCharacterRange: range];
     }
 }
 
@@ -148,13 +148,7 @@
     NSLog(@"changeFont = %@", newFont);
     
     [defaults setValue: [newFont fontName] forKey: @"fontName"];
-    [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
-    
-    NSLayoutManager *lm = [self layoutManager];
-    JJTypesetter *ts = (JJTypesetter *) [lm typesetter];
-    CGFloat lineHeight = [defaults doubleForKey: @"fontSize"] + [defaults doubleForKey: @"lineHeight"];
-    [ts setLineHeight: lineHeight];
-    [self setNeedsDisplay: YES];    
+    [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];    
 }
 
 @end

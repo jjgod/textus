@@ -2,7 +2,7 @@
 //  JJTypesetter.m
 //  Textus
 //
-//  Created by Jjgod Jiang on 3/16/09.
+//  Created by Jjgod Jiang on 3/18/09.
 //  Copyright 2009 Jjgod Jiang. All rights reserved.
 //
 
@@ -10,16 +10,17 @@
 
 @implementation JJTypesetter
 
-@synthesize lineHeight;
+@synthesize lineGap;
 
 - (void) willSetLineFragmentRect: (NSRectPointer) lineRect 
                    forGlyphRange: (NSRange) glyphRange 
                         usedRect: (NSRectPointer) usedRect 
                   baselineOffset: (CGFloat *) baselineOffset
 {
+    CGFloat lineHeight = lineRect->size.height + lineGap;
+
     lineRect->size.height = lineHeight;
     usedRect->size.height = lineHeight;
-    // *baselineOffset = _baselineOffset;
 }
 
 @end

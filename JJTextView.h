@@ -8,8 +8,21 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface JJTextView : NSTextView {
-
+@interface JJTextView : NSView {
+    NSSize textContainerInset;
+    CGFloat lineGap;
+    NSColor *backgroundColor;
+    NSFont *font;
+    NSString *string;
+    CTFrameRef frame;
 }
+
+@property (assign) NSSize textContainerInset;
+@property (assign) CGFloat lineGap;
+@property (retain) NSColor *backgroundColor;
+@property (retain) NSFont *font;
+@property (copy) NSString *string;
+
+- (void) relayout;
 
 @end

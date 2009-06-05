@@ -7,9 +7,14 @@
 //
 
 #import "JJTextView.h"
-#import "JJTypesetter.h"
 
 @implementation JJTextView
+
+@synthesize textContainerInset;
+@synthesize lineGap;
+@synthesize backgroundColor;
+@synthesize font;
+@synthesize string;
 
 - (void) awakeFromNib
 {
@@ -22,11 +27,8 @@
                       options: 0
                       context: nil];
 
-    [self setTextContainerInset: NSMakeSize(20, 20)];
-    JJTypesetter *ts = [[JJTypesetter alloc] init];
-    [[self layoutManager] setTypesetter: ts];
-    [ts setLineGap: [defaults doubleForKey: @"lineHeight"]];
-    [ts release];
+    self.textContainerInset = NSMakeSize(20, 20);
+    self.lineGap = [defaults doubleForKey: @"lineHeight"];
 }
 
 - (void) dealloc
@@ -39,6 +41,43 @@
     [super dealloc];
 }
 
+- (void) relayout
+{
+    NSLog(@"self string: %@", [self string]);
+    if (string)
+    {
+        // Initialize a rectangular path.
+        CGMutablePathRef path = CGPathCreateMutable();
+        CGPathAddRect(path, NULL, NSRectToCGRect([self frame]));
+
+        NSAttributedString *attrString = [[NSAttributedString alloc] initWithString: string];
+
+        // Create the framesetter with the attributed string.
+        CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) attrString);
+        [attrString release];
+
+        if (frame)
+            CFRelease(frame);
+
+        // Create the frame and draw it into the graphics context
+        frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), path, NULL);
+
+        CFRelease(framesetter);
+    }
+}
+
+- (void) drawRect: (NSRect) rect
+{
+    NSLog(@"rect: %@", NSStringFromRect(rect));
+
+    [self relayout];
+
+    // Initialize a graphics context and set the text matrix to a known value.
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+    CTFrameDraw(frame, context);
+}
+
 - (void) observeValueForKeyPath: (NSString *) keyPath
                        ofObject: (id) object
                          change: (NSDictionary *) change
@@ -47,18 +86,12 @@
     NSLog(@"keyPath = %@", keyPath);
 
     if ([keyPath isEqual: @"backgroundColor"])
-        [self setBackgroundColor: [[NSApp delegate] backgroundColor]];
-    
+        self.backgroundColor = [[NSApp delegate] backgroundColor];
+
     else if ([keyPath isEqual: @"lineHeight"])
     {
-        NSLayoutManager *lm = [self layoutManager];
-        JJTypesetter *ts = (JJTypesetter *) [lm typesetter];
-        [ts setLineGap: [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"]];
-        NSRange range = NSMakeRange(0, [[self textStorage] length]);
-
-        [lm invalidateLayoutForCharacterRange: range 
-                         actualCharacterRange: NULL];
-        [lm invalidateDisplayForCharacterRange: range];
+        self.lineGap = [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
+        [self relayout];
     }
 }
 
@@ -71,11 +104,11 @@
 {
     float y;
     NSRect rect;
-    
+
     rect = [[self enclosingScrollView] documentVisibleRect];
     y = rect.origin.y;
     y += value;
-    
+
     [self scrollTo: y];
 }
 
@@ -148,7 +181,7 @@
     NSLog(@"changeFont = %@", newFont);
     
     [defaults setValue: [newFont fontName] forKey: @"fontName"];
-    [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];    
+    [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
 }
 
 @end

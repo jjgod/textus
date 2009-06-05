@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		070F71150F6E00D000CD15C4 /* Storybook-01.icns in Resources */ = {isa = PBXBuildFile; fileRef = 070F71140F6E00D000CD15C4 /* Storybook-01.icns */; };
-		078D1A880F70CC5E004FD3A0 /* JJTypesetter.m in Sources */ = {isa = PBXBuildFile; fileRef = 078D1A870F70CC5E004FD3A0 /* JJTypesetter.m */; };
 		07AF47CE0F6E3EFA00558BF4 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07AF47CD0F6E3EFA00558BF4 /* AppController.m */; };
 		07AF48FD0F6E5D6900558BF4 /* JJTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 07AF48FC0F6E5D6900558BF4 /* JJTextView.m */; };
 		1DDD582C0DA1D0D100B32029 /* TextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* TextDocument.xib */; };
@@ -22,8 +21,6 @@
 
 /* Begin PBXFileReference section */
 		070F71140F6E00D000CD15C4 /* Storybook-01.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Storybook-01.icns"; sourceTree = "<group>"; };
-		078D1A860F70CC5E004FD3A0 /* JJTypesetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JJTypesetter.h; sourceTree = "<group>"; };
-		078D1A870F70CC5E004FD3A0 /* JJTypesetter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JJTypesetter.m; sourceTree = "<group>"; };
 		07AF47CC0F6E3EFA00558BF4 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		07AF47CD0F6E3EFA00558BF4 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		07AF48FB0F6E5D6900558BF4 /* JJTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JJTextView.h; sourceTree = "<group>"; };
@@ -97,8 +94,6 @@
 		2A37F4ABFDCFA73011CA2CEA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				078D1A860F70CC5E004FD3A0 /* JJTypesetter.h */,
-				078D1A870F70CC5E004FD3A0 /* JJTypesetter.m */,
 				07AF47CC0F6E3EFA00558BF4 /* AppController.h */,
 				07AF47CD0F6E3EFA00558BF4 /* AppController.m */,
 				2A37F4AEFDCFA73011CA2CEA /* TextDocument.h */,
@@ -202,7 +197,6 @@
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				07AF47CE0F6E3EFA00558BF4 /* AppController.m in Sources */,
 				07AF48FD0F6E5D6900558BF4 /* JJTextView.m in Sources */,
-				078D1A880F70CC5E004FD3A0 /* JJTypesetter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

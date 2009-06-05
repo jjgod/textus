@@ -8,10 +8,11 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import "JJTextView.h"
 
 @interface TextDocument : NSDocument
 {
-    IBOutlet NSTextView *textView;
+    IBOutlet JJTextView *textView;
     NSStringEncoding GB18030Encoding;
     NSString *fileContents;
 }

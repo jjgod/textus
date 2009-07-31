@@ -11,6 +11,8 @@
 
 @implementation TextDocument
 
+@synthesize fileContents;
+
 - (id) init
 {
     self = [super init];
@@ -39,8 +41,9 @@
     [super windowControllerDidLoadNib: aController];
 
     [textView setBackgroundColor: [(AppController *) [NSApp delegate] backgroundColor]];
+    [textView setDocument: self];
     if (fileContents)
-        [textView setText: fileContents];
+        [textView invalidateLayout];
 }
 
 - (NSData *) dataOfType: (NSString *) typeName
@@ -57,15 +60,22 @@
                 error: (NSError **) outError
 {
     BOOL readSuccess = NO;
+    NSString *contents;
 
-    fileContents = [[NSString alloc] initWithData: data 
-                                         encoding: NSUTF8StringEncoding];
-    if (! fileContents)
-        fileContents = [[NSString alloc] initWithData: data 
-                                             encoding: GB18030Encoding];
+    contents = [[NSString alloc] initWithData: data
+                                     encoding: NSUTF8StringEncoding];
+    if (! contents)
+        contents = [[NSString alloc] initWithData: data
+                                         encoding: GB18030Encoding];
 
-    if (fileContents)
+    if (contents)
+    {
+        // Remove DOS line endings
+        [self setFileContents: [contents stringByReplacingOccurrencesOfString: @"\r"
+                                                                   withString: @""]];
+        [contents release];
         readSuccess = YES;
+    }
 
     if (outError != NULL)
 		*outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:unimpErr userInfo:NULL];

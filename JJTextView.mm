@@ -7,13 +7,17 @@
 //
 
 #import "JJTextView.h"
+#import <time.h>
 
 #define kMaxLinesPerFrame 256
+
+#define MAX_LINES(total)    (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
 
 @implementation JJTextView
 
 @synthesize textInset;
 @synthesize backgroundColor;
+@synthesize document;
 
 - (id) initWithFrame: (NSRect) frameRect
 {
@@ -43,16 +47,7 @@
                                                forKeyPath: @"backgroundColor"];
     [[NSUserDefaults standardUserDefaults] removeObserver: self
                                                forKeyPath: @"lineHeight"];
-    [text release];
-    text = nil;
-
     [super dealloc];
-}
-
-- (void) setText: (NSString *) str
-{
-    text = [str retain];
-    [self invalidateLayout];
 }
 
 - (void) removeAllLines
@@ -69,6 +64,9 @@
 
 - (void) invalidateLayout
 {
+    NSString *text = [document fileContents];
+    clock_t startTime = clock(), duration;
+
     if (! text)
         return;
 
@@ -119,17 +117,20 @@
 
         CTFrameRef frame = CTFramesetterCreateFrame(framesetter, range, path, NULL);
         frameRange = CTFrameGetVisibleStringRange(frame);
-        
+
         CFArrayRef lines = CTFrameGetLines(frame);
         CFIndex i, total = CFArrayGetCount(lines);
+        CGFloat y;
 
-        CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), origins);
+        CTFrameGetLineOrigins(frame, CFRangeMake(0, MAX_LINES(total)), origins);
 
         for (i = 0; i < total; i++)
         {
             lineData.line = (CTLineRef) CFRetain(CFArrayGetValueAtIndex(lines, i));
+            y = frameRect.origin.y + frameRect.size.height - origins[i].y;
+            // NSLog(@"y = %g\n", y);
             lineData.origin = CGPointMake(frameRect.origin.x + origins[i].x,
-                                          frameRect.origin.y + frameRect.size.height - origins[i].y);
+                                          y);
             textLines.push_back(lineData);
         }
 
@@ -139,7 +140,10 @@
               NSStringFromRect(NSRectFromCGRect(frameRect)));
 #endif
         // range.location += frameRange.length;
-        frameRect.origin.y = lineData.origin.y;
+        if (lineData.line)
+            CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
+
+        frameRect.origin.y = lineData.origin.y + descent + leading;
         frameRect.size.height = rect.size.height;
 
         CFRelease(path);
@@ -148,10 +152,9 @@
 
     CFRelease(framesetter);
 
-    if (lineData.line)
-        CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
-    // NSLog(@"descent = %g, leading = %g", descent, leading);
-    newFrame.size.height = frameRect.origin.y + descent + leading + textInset.height;
+    duration = clock() - startTime;
+    NSLog(@"layout time = %g secs", (double) duration / (double) CLOCKS_PER_SEC);
+    newFrame.size.height = frameRect.origin.y + textInset.height;
     [self setFrame: newFrame];
     [self setNeedsDisplay: YES];
 }
@@ -287,6 +290,11 @@
 - (BOOL) acceptsFirstResponder
 {
     return YES;
+}
+
+- (void) viewDidEndLiveResize
+{
+    [self invalidateLayout];
 }
 
 @end

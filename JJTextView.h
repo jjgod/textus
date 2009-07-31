@@ -16,17 +16,22 @@ typedef struct LineData {
     CGPoint   origin;
 } JJLineData;
 
+@interface TextDocument : NSDocument
+
+@property (retain) NSString *fileContents;
+
+@end
+
 @interface JJTextView : NSView {
     NSSize textInset;
     NSColor *backgroundColor;
-    NSString *text;
     vector<JJLineData> textLines;
+    TextDocument *document;
 }
 
 @property (assign) NSSize textInset;
 @property (retain) NSColor *backgroundColor;
-
-- (void) setText: (NSString *) str;
+@property (assign) TextDocument *document;
 
 - (void) invalidateLayout;
 

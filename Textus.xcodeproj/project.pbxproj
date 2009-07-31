@@ -23,7 +23,7 @@
 		070F71140F6E00D000CD15C4 /* Storybook-01.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Storybook-01.icns"; sourceTree = "<group>"; };
 		07AF47CC0F6E3EFA00558BF4 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		07AF47CD0F6E3EFA00558BF4 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
-		07AF48FB0F6E5D6900558BF4 /* JJTextView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = JJTextView.h; sourceTree = "<group>"; };
+		07AF48FB0F6E5D6900558BF4 /* JJTextView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = JJTextView.h; sourceTree = "<group>"; };
 		07AF48FC0F6E5D6900558BF4 /* JJTextView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JJTextView.mm; sourceTree = "<group>"; };
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };

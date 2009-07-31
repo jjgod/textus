@@ -9,12 +9,15 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class TextDocument;
+
 @interface JJTextView : NSView
 
 @property (assign) NSSize textInset;
 @property (retain) NSColor *backgroundColor;
+@property (assign) TextDocument *document;
 
-- (void) setText: (NSString *) str;
+- (void) invalidateLayout;
 
 @end
 
@@ -24,5 +27,7 @@
     NSStringEncoding GB18030Encoding;
     NSString *fileContents;
 }
+
+@property (retain) NSString *fileContents;
 
 @end

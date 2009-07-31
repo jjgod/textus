@@ -25,9 +25,9 @@
 {
     IBOutlet JJTextView *textView;
     NSStringEncoding GB18030Encoding;
-    NSString *fileContents;
+    NSMutableAttributedString *fileContents;
 }
 
-@property (retain) NSString *fileContents;
+@property (retain) NSMutableAttributedString *fileContents;
 
 @end

@@ -16,7 +16,6 @@
 @implementation JJTextView
 
 @synthesize textInset;
-@synthesize backgroundColor;
 @synthesize document;
 
 - (id) initWithFrame: (NSRect) frameRect
@@ -27,27 +26,6 @@
         textLines.clear();
     }
     return self;
-}
-
-- (void) awakeFromNib
-{
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
-
-    for (NSString *keyPath in keyPaths)
-        [defaults addObserver: self
-                   forKeyPath: keyPath
-                      options: 0
-                      context: nil];
-}
-
-- (void) dealloc
-{
-    [[NSUserDefaults standardUserDefaults] removeObserver: self
-                                               forKeyPath: @"backgroundColor"];
-    [[NSUserDefaults standardUserDefaults] removeObserver: self
-                                               forKeyPath: @"lineHeight"];
-    [super dealloc];
 }
 
 - (void) removeAllLines
@@ -64,7 +42,7 @@
 
 - (void) invalidateLayout
 {
-    NSString *text = [document fileContents];
+    NSMutableAttributedString *text = [document fileContents];
     clock_t startTime = clock(), duration;
 
     if (! text)
@@ -73,28 +51,9 @@
     NSRect rect = [[self enclosingScrollView] documentVisibleRect];
     NSLog(@"rect to draw: %@", NSStringFromRect(rect));
     NSRect newFrame = rect;
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    CGFloat lineHeightMultiple = [defaults doubleForKey: @"lineHeight"];
-
-    CTParagraphStyleSetting settings[] = {
-        { kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(CGFloat), &lineHeightMultiple },
-    };
-    CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(settings, sizeof(settings) / sizeof(settings[0]));
-    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString: text];
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys: 
-                                [NSFont fontWithName: [defaults stringForKey: @"fontName"]
-                                                size: [defaults doubleForKey: @"fontSize"]],
-                                (NSString *) kCTFontAttributeName,
-                                paragraphStyle, (NSString *) kCTParagraphStyleAttributeName,
-                                nil];
-    CFRelease(paragraphStyle);
-
-    [attrString setAttributes: attributes
-                        range: NSMakeRange(0, text.length)];
 
     // Create the framesetter with the attributed string.
-    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) attrString);
-    [attrString release];
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) text);
 
     CFRange fullRange = CFRangeMake(0, text.length);
     CGRect frameRect = CGRectMake(textInset.width, textInset.height,
@@ -196,22 +155,6 @@
     }
 
     // NSLog(@"drawLines from: %u to %u", from, i);
-}
-
-- (void) observeValueForKeyPath: (NSString *) keyPath
-                       ofObject: (id) object
-                         change: (NSDictionary *) change
-                        context: (void *) context
-{
-    NSLog(@"keyPath = %@", keyPath);
-
-    if ([keyPath isEqual: @"backgroundColor"])
-        self.backgroundColor = [[NSApp delegate] backgroundColor];
-
-    else if ([keyPath isEqual: @"lineHeight"] ||
-             [keyPath isEqual: @"fontName"] ||
-             [keyPath isEqual: @"fontSize"])
-        [self invalidateLayout];
 }
 
 - (void) scrollTo: (float) y

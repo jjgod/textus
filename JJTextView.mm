@@ -8,25 +8,7 @@
 
 #import "JJTextView.h"
 
-void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
-{
-    CFArrayRef lines = CTFrameGetLines(frame);
-    CFIndex i, total = CFArrayGetCount(lines);
-    CGPoint origins[255];
-    CGRect rect = CGPathGetBoundingBox(CTFrameGetPath(frame));
-    CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), origins);
-
-    // NSLog(@"bounding rect: %@", NSStringFromRect(NSRectFromCGRect(rect)));
-    for (i = 0; i < total; i++)
-    {
-        CTLineRef line = CFArrayGetValueAtIndex(lines, i);
-        // NSLog(@"origins[%d].y = %g", i, rect.size.height - origins[i].y);
-        CGContextSetTextPosition(context,
-                                 rect.origin.x + origins[i].x,
-                                 rect.origin.y + rect.size.height - origins[i].y);
-        CTLineDraw(line, context);
-    }
-}
+#define kMaxLinesPerFrame 256
 
 @implementation JJTextView
 
@@ -38,7 +20,7 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
     if ((self = [super initWithFrame: frameRect]))
     {
         textInset = NSMakeSize(20, 20);
-        textFrames = [[NSMutableArray alloc] init];
+        textLines.clear();
     }
     return self;
 }
@@ -61,37 +43,46 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
                                                forKeyPath: @"backgroundColor"];
     [[NSUserDefaults standardUserDefaults] removeObserver: self
                                                forKeyPath: @"lineHeight"];
-    [string release];
-    string = nil;
-    
-    [textFrames release];
-    textFrames = nil;
+    [text release];
+    text = nil;
 
     [super dealloc];
 }
 
-- (void) setString: (NSString *) str
+- (void) setText: (NSString *) str
 {
-    string = [str retain];
+    text = [str retain];
     [self invalidateLayout];
+}
+
+- (void) removeAllLines
+{
+    NSUInteger i, count = textLines.size();
+
+    NSLog(@"total lines: %u", count);
+
+    for (i = 0; i < count; i++)
+        CFRelease(textLines[i].line);
+
+    textLines.clear();
 }
 
 - (void) invalidateLayout
 {
-    if (! string)
+    if (! text)
         return;
 
     NSRect rect = [[self enclosingScrollView] documentVisibleRect];
     NSLog(@"rect to draw: %@", NSStringFromRect(rect));
     NSRect newFrame = rect;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    CGFloat lineHeight = [defaults doubleForKey: @"lineHeight"];
+    CGFloat lineHeightMultiple = [defaults doubleForKey: @"lineHeight"];
 
     CTParagraphStyleSetting settings[] = {
-        { kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(CGFloat), &lineHeight },
+        { kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(CGFloat), &lineHeightMultiple },
     };
     CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(settings, sizeof(settings) / sizeof(settings[0]));
-    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString: string];
+    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] initWithString: text];
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys: 
                                 [NSFont fontWithName: [defaults stringForKey: @"fontName"]
                                                 size: [defaults doubleForKey: @"fontSize"]],
@@ -101,19 +92,24 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
     CFRelease(paragraphStyle);
 
     [attrString setAttributes: attributes
-                        range: NSMakeRange(0, string.length)];
+                        range: NSMakeRange(0, text.length)];
 
     // Create the framesetter with the attributed string.
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) attrString);
     [attrString release];
 
-    CFRange fullRange = CFRangeMake(0, string.length);
+    CFRange fullRange = CFRangeMake(0, text.length);
     CGRect frameRect = CGRectMake(textInset.width, textInset.height,
                                   rect.size.width - 2 * textInset.width,
                                   rect.size.height - textInset.height);
 
-    [textFrames removeAllObjects];
     CFRange range, frameRange;
+    CGPoint origins[kMaxLinesPerFrame];
+    CGFloat ascent, descent, leading;
+    ascent = descent = leading = 0;
+    JJLineData lineData = { NULL, CGPointMake(0, 0) };
+
+    [self removeAllLines];
     for (range = frameRange = CFRangeMake(0, 0);
          range.location < fullRange.length;
          range.location += frameRange.length)
@@ -123,16 +119,28 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
 
         CTFrameRef frame = CTFramesetterCreateFrame(framesetter, range, path, NULL);
         frameRange = CTFrameGetVisibleStringRange(frame);
+        
+        CFArrayRef lines = CTFrameGetLines(frame);
+        CFIndex i, total = CFArrayGetCount(lines);
+
+        CTFrameGetLineOrigins(frame, CFRangeMake(0, 0), origins);
+
+        for (i = 0; i < total; i++)
+        {
+            lineData.line = (CTLineRef) CFRetain(CFArrayGetValueAtIndex(lines, i));
+            lineData.origin = CGPointMake(frameRect.origin.x + origins[i].x,
+                                          frameRect.origin.y + frameRect.size.height - origins[i].y);
+            textLines.push_back(lineData);
+        }
+
 #if 0
         NSLog(@"frameRange: %ld, %ld, %@",
               frameRange.location, frameRange.length,
               NSStringFromRect(NSRectFromCGRect(frameRect)));
 #endif
         // range.location += frameRange.length;
-        frameRect.origin.y += frameRect.size.height;
+        frameRect.origin.y = lineData.origin.y;
         frameRect.size.height = rect.size.height;
-
-        [textFrames addObject: (id) frame];
 
         CFRelease(path);
         CFRelease(frame);
@@ -140,7 +148,10 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
 
     CFRelease(framesetter);
 
-    newFrame.size.height = frameRect.origin.y;
+    if (lineData.line)
+        CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
+    // NSLog(@"descent = %g, leading = %g", descent, leading);
+    newFrame.size.height = frameRect.origin.y + descent + leading + textInset.height;
     [self setFrame: newFrame];
     [self setNeedsDisplay: YES];
 }
@@ -150,42 +161,38 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
     return YES;
 }
 
+// Do a binary search to find the line requested
+- (NSUInteger) lineBefore: (CGFloat) y
+{
+    NSUInteger i;
+
+    for (i = 0; i < textLines.size(); i++)
+        if (textLines[i].origin.y > y)
+            return i == 0 ? 0 : i - 1;
+
+    return i;
+}
+
 - (void) drawRect: (NSRect) rect
 {
-    // NSLog(@"rect: %@", NSStringFromRect(rect));
-
     // Initialize a graphics context and set the text matrix to a known value.
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
 
-    CTFrameRef frame = (CTFrameRef) [textFrames objectAtIndex: 1];
-    if (! frame)
-        frame = (CTFrameRef) [textFrames objectAtIndex: 0];
-    if (! frame)
-        return;
+    NSUInteger i, from, total = textLines.size();
+    JJLineData lineData = { NULL, CGPointZero };
+    CGFloat bottom = rect.origin.y + rect.size.height;
 
-    CGRect bounds = CGPathGetBoundingBox(CTFrameGetPath(frame));
-    NSUInteger i, start = (rect.origin.y - textInset.height) / bounds.size.height;
-
-    for (i = start; i < start + 2 && i < [textFrames count]; i++)
+    from = [self lineBefore: rect.origin.y];
+    for (i = from; i < total && lineData.origin.y <= bottom; i++)
     {
-        frame = (CTFrameRef) [textFrames objectAtIndex: i];
+        lineData = textLines[i];
 
-#if 0
-        NSLog(@"drawing frame: %lu, rect: %@", i, NSStringFromRect(NSRectFromCGRect(bounds)));
-        CGRect bounds = CGPathGetBoundingBox(CTFrameGetPath(frame));
-
-        CGContextSetRGBFillColor(context, 0.1, 0.7, 0.7, 1.0);
-        NSRectFill(NSRectFromCGRect(bounds));
-
-        [[NSColor redColor] set];
-        NSRectFill(NSMakeRect(200, bounds.origin.y, 50, 1.5));
-
-        [[NSColor blackColor] set];
-        NSRectFill(NSMakeRect(0, bounds.origin.y + bounds.size.height, 50, 1.5));
-#endif
-        CTFrameDrawLines((CTFrameRef) frame, context);
+        CGContextSetTextPosition(context, lineData.origin.x, lineData.origin.y);
+        CTLineDraw(lineData.line, context);
     }
+
+    // NSLog(@"drawLines from: %u to %u", from, i);
 }
 
 - (void) observeValueForKeyPath: (NSString *) keyPath
@@ -211,7 +218,7 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
 
 - (void) scrollBy: (float) value
 {
-    float y;
+    CGFloat y;
     NSRect rect;
 
     rect = [[self enclosingScrollView] documentVisibleRect];
@@ -225,7 +232,7 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
 {
     float y;
     CGFloat pageHeight = [(NSScrollView *) [self superview] documentVisibleRect].size.height;
-    
+
     switch (ch)
     {
         case NSDownArrowFunctionKey:
@@ -266,7 +273,7 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
 {
     int characterIndex;
     int charactersInEvent;
-    
+
     charactersInEvent = [[event characters] length];
     for (characterIndex = 0; characterIndex < charactersInEvent;  
          characterIndex++) {
@@ -275,6 +282,11 @@ void CTFrameDrawLines(CTFrameRef frame, CGContextRef context)
         if ([self processKey: ch] == NO)
             [self interpretKeyEvents:[NSArray arrayWithObject:event]];
     }
+}
+
+- (BOOL) acceptsFirstResponder
+{
+    return YES;
 }
 
 @end

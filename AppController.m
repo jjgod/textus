@@ -56,8 +56,8 @@ NSString *encodeColor(NSColor *color)
     [appDefaults setValue: @"#000000" forKey: @"foregroundColor"];
     [appDefaults setValue: @"#FFFFFF" forKey: @"backgroundColor"];
     [appDefaults setValue: @"STKaiti" forKey: @"fontName"];
-    [appDefaults setValue: [NSNumber numberWithDouble: 14.0] forKey: @"fontSize"];
-    [appDefaults setValue: [NSNumber numberWithDouble: 16.0] forKey: @"lineHeight"];
+    [appDefaults setValue: [NSNumber numberWithDouble: 24.0] forKey: @"fontSize"];
+    [appDefaults setValue: [NSNumber numberWithDouble: 1.1] forKey: @"lineHeight"];
 
 	[defaults registerDefaults: appDefaults];
     [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues: appDefaults];

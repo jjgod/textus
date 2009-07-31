@@ -8,7 +8,15 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import "JJTextView.h"
+
+@interface JJTextView : NSView
+
+@property (assign) NSSize textInset;
+@property (retain) NSColor *backgroundColor;
+
+- (void) setText: (NSString *) str;
+
+@end
 
 @interface TextDocument : NSDocument
 {

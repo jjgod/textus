@@ -40,7 +40,7 @@
 
     [textView setBackgroundColor: [(AppController *) [NSApp delegate] backgroundColor]];
     if (fileContents)
-        [textView setString: fileContents];
+        [textView setText: fileContents];
 }
 
 - (NSData *) dataOfType: (NSString *) typeName

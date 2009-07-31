@@ -7,18 +7,27 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <vector>
+
+using namespace std;
+
+typedef struct LineData {
+    CTLineRef line;
+    CGPoint   origin;
+} JJLineData;
 
 @interface JJTextView : NSView {
     NSSize textInset;
     NSColor *backgroundColor;
-    NSString *string;
-    NSMutableArray *textFrames;
+    NSString *text;
+    vector<JJLineData> textLines;
 }
 
 @property (assign) NSSize textInset;
 @property (retain) NSColor *backgroundColor;
 
-- (void) setString: (NSString *) string;
+- (void) setText: (NSString *) str;
+
 - (void) invalidateLayout;
 
 @end

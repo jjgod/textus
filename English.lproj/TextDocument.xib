@@ -34,7 +34,7 @@
 			<object class="NSWindowTemplate" id="275939982">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{103, -42}, {939, 787}}</string>
+				<string key="NSWindowRect">{{103, -31}, {939, 776}}</string>
 				<int key="NSWTFlags">1886912512</int>
 				<string key="NSWindowTitle">Window</string>
 				<string key="NSWindowClass">NSWindow</string>
@@ -59,12 +59,12 @@
 										<object class="NSCustomView" id="793227834">
 											<reference key="NSNextResponder" ref="479699895"/>
 											<int key="NSvFlags">274</int>
-											<string key="NSFrameSize">{939, 766}</string>
+											<string key="NSFrameSize">{939, 755}</string>
 											<reference key="NSSuperview" ref="479699895"/>
 											<string key="NSClassName">JJTextView</string>
 										</object>
 									</object>
-									<string key="NSFrame">{{1, 1}, {939, 766}}</string>
+									<string key="NSFrame">{{1, 1}, {939, 755}}</string>
 									<reference key="NSSuperview" ref="707828383"/>
 									<reference key="NSNextKeyView" ref="793227834"/>
 									<reference key="NSDocView" ref="793227834"/>
@@ -100,7 +100,7 @@
 									<double key="NSPercent">5.060241e-01</double>
 								</object>
 							</object>
-							<string key="NSFrame">{{-1, 20}, {941, 768}}</string>
+							<string key="NSFrame">{{-1, 20}, {941, 757}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSNextKeyView" ref="479699895"/>
 							<int key="NSsFlags">562</int>
@@ -109,7 +109,7 @@
 							<reference key="NSContentView" ref="479699895"/>
 						</object>
 					</object>
-					<string key="NSFrameSize">{939, 787}</string>
+					<string key="NSFrameSize">{939, 776}</string>
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
@@ -263,8 +263,8 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{389, 266}, {939, 787}}</string>
-					<string>{{389, 266}, {939, 787}}</string>
+					<string>{{389, 80}, {939, 776}}</string>
+					<string>{{389, 80}, {939, 776}}</string>
 					<integer value="1" id="9"/>
 					<string>{{201, 387}, {507, 413}}</string>
 					<reference ref="9"/>

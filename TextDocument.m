@@ -40,11 +40,7 @@
 
     [textView setBackgroundColor: [(AppController *) [NSApp delegate] backgroundColor]];
     if (fileContents)
-    {
         [textView setString: fileContents];
-        [textView scrollPoint: NSMakePoint(0.0, 0)];
-        [textView setNeedsDisplay: YES];
-    }
 }
 
 - (NSData *) dataOfType: (NSString *) typeName

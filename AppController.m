@@ -104,15 +104,24 @@ NSString *encodeColor(NSColor *color)
     return NO;
 }
 
+- (BOOL) acceptsFirstResponder
+{
+    return YES;
+}
+
 - (void) changeFont: (id) sender
 {
     NSFont *oldFont = [self font];
     NSFont *newFont = [sender convertFont: oldFont];
-    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
     NSLog(@"changeFont = %@", newFont);
 
-    [[NSUserDefaults standardUserDefaults] setValue: [newFont fontName] forKey: @"fontName"];
-    [[NSUserDefaults standardUserDefaults] setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
+    if ([oldFont fontName] != [newFont fontName])
+        [defaults setValue: [newFont fontName] forKey: @"fontName"];
+
+    if ([oldFont pointSize] != [newFont pointSize])
+        [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
 }
 
 @end

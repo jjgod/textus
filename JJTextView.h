@@ -9,20 +9,16 @@
 #import <Cocoa/Cocoa.h>
 
 @interface JJTextView : NSView {
-    NSSize textContainerInset;
-    CGFloat lineGap;
+    NSSize textInset;
     NSColor *backgroundColor;
-    NSFont *font;
     NSString *string;
-    CTFrameRef frame;
+    NSMutableArray *textFrames;
 }
 
-@property (assign) NSSize textContainerInset;
-@property (assign) CGFloat lineGap;
+@property (assign) NSSize textInset;
 @property (retain) NSColor *backgroundColor;
-@property (retain) NSFont *font;
-@property (copy) NSString *string;
 
-- (void) relayout;
+- (void) setString: (NSString *) string;
+- (void) invalidateLayout;
 
 @end

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		070F71150F6E00D000CD15C4 /* Storybook-01.icns in Resources */ = {isa = PBXBuildFile; fileRef = 070F71140F6E00D000CD15C4 /* Storybook-01.icns */; };
+		0728CDEC102817BC0060E2F2 /* Textus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0728CDEB102817BC0060E2F2 /* Textus.icns */; };
 		07AF47CE0F6E3EFA00558BF4 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07AF47CD0F6E3EFA00558BF4 /* AppController.m */; };
 		07AF48FD0F6E5D6900558BF4 /* JJTextView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AF48FC0F6E5D6900558BF4 /* JJTextView.mm */; };
 		1DDD582C0DA1D0D100B32029 /* TextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* TextDocument.xib */; };
@@ -20,7 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		070F71140F6E00D000CD15C4 /* Storybook-01.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "Storybook-01.icns"; sourceTree = "<group>"; };
+		0728CDEB102817BC0060E2F2 /* Textus.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Textus.icns; sourceTree = "<group>"; };
 		07AF47CC0F6E3EFA00558BF4 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		07AF47CD0F6E3EFA00558BF4 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		07AF48FB0F6E5D6900558BF4 /* JJTextView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = JJTextView.h; sourceTree = "<group>"; };
@@ -116,7 +116,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				070F71140F6E00D000CD15C4 /* Storybook-01.icns */,
+				0728CDEB102817BC0060E2F2 /* Textus.icns */,
 				2A37F4B9FDCFA73011CA2CEA /* Credits.rtf */,
 				8D15AC360486D014006FF6A4 /* Info.plist */,
 				089C165FFE840EACC02AAC07 /* InfoPlist.strings */,
@@ -182,7 +182,7 @@
 				8D15AC2F0486D014006FF6A4 /* InfoPlist.strings in Resources */,
 				1DDD582C0DA1D0D100B32029 /* TextDocument.xib in Resources */,
 				1DDD582D0DA1D0D100B32029 /* MainMenu.xib in Resources */,
-				070F71150F6E00D000CD15C4 /* Storybook-01.icns in Resources */,
+				0728CDEC102817BC0060E2F2 /* Textus.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

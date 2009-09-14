@@ -40,6 +40,12 @@
     textLines.clear();
 }
 
+- (void) dealloc
+{
+    textLines.clear();
+    [super dealloc];
+}
+
 - (void) invalidateLayout
 {
     NSMutableAttributedString *text = [document fileContents];
@@ -48,17 +54,16 @@
     if (! text)
         return;
 
-    NSRect rect = [[self enclosingScrollView] documentVisibleRect];
-    NSLog(@"rect to draw: %@", NSStringFromRect(rect));
-    NSRect newFrame = rect;
+    NSSize contentSize = [[self enclosingScrollView] contentSize];
+    NSLog(@"Original content size: %@", NSStringFromSize(contentSize));
 
     // Create the framesetter with the attributed string.
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) text);
 
     CFRange fullRange = CFRangeMake(0, text.length);
     CGRect frameRect = CGRectMake(textInset.width, textInset.height,
-                                  rect.size.width - 2 * textInset.width,
-                                  rect.size.height - textInset.height);
+                                  contentSize.width - 2 * textInset.width - [NSScroller scrollerWidth],
+                                  contentSize.height - textInset.height);
 
     CFRange range, frameRange;
     CGPoint origins[kMaxLinesPerFrame];
@@ -103,7 +108,7 @@
             CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
 
         frameRect.origin.y = lineData.origin.y + descent + leading;
-        frameRect.size.height = rect.size.height;
+        frameRect.size.height = contentSize.height;
 
         CFRelease(path);
         CFRelease(frame);
@@ -113,7 +118,10 @@
 
     duration = clock() - startTime;
     NSLog(@"layout time = %g secs", (double) duration / (double) CLOCKS_PER_SEC);
+
+    NSRect newFrame = [self frame];
     newFrame.size.height = frameRect.origin.y + textInset.height;
+
     [self setFrame: newFrame];
     [self setNeedsDisplay: YES];
 }
@@ -140,6 +148,8 @@
     // Initialize a graphics context and set the text matrix to a known value.
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+
+    NSLog(@"drawRect: %@", NSStringFromRect(rect));
 
     NSUInteger i, from, total = textLines.size();
     JJLineData lineData = { NULL, CGPointZero };

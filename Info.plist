@@ -30,7 +30,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string>Storybook-01</string>
+	<string>Textus</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.jjgod.${PRODUCT_NAME:identifier}</string>
 	<key>CFBundleInfoDictionaryVersion</key>

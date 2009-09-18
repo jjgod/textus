@@ -6,7 +6,6 @@
 //  Copyright Jjgod Jiang 2009 . All rights reserved.
 //
 
-
 #import <Cocoa/Cocoa.h>
 
 @class TextDocument;
@@ -18,6 +17,7 @@
 @property (assign) TextDocument *document;
 
 - (void) invalidateLayout;
+- (void) scrollToLine: (NSUInteger) line;
 
 @end
 
@@ -26,8 +26,12 @@
     IBOutlet JJTextView *textView;
     NSStringEncoding GB18030Encoding;
     NSMutableAttributedString *fileContents;
+    NSUInteger lastReadLine;
 }
 
 @property (retain) NSMutableAttributedString *fileContents;
+@property (assign) NSUInteger lastReadLine;
+
+- (void) saveMetaData;
 
 @end

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0728CDEC102817BC0060E2F2 /* Textus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0728CDEB102817BC0060E2F2 /* Textus.icns */; };
+		074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 074880B510636E6900C91C75 /* ExtendedAttributes.m */; };
 		07AF47CE0F6E3EFA00558BF4 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07AF47CD0F6E3EFA00558BF4 /* AppController.m */; };
 		07AF48FD0F6E5D6900558BF4 /* JJTextView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AF48FC0F6E5D6900558BF4 /* JJTextView.mm */; };
 		1DDD582C0DA1D0D100B32029 /* TextDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* TextDocument.xib */; };
@@ -21,6 +22,8 @@
 
 /* Begin PBXFileReference section */
 		0728CDEB102817BC0060E2F2 /* Textus.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Textus.icns; sourceTree = "<group>"; };
+		074880B410636E6900C91C75 /* ExtendedAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedAttributes.h; sourceTree = "<group>"; };
+		074880B510636E6900C91C75 /* ExtendedAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendedAttributes.m; sourceTree = "<group>"; };
 		07AF47CC0F6E3EFA00558BF4 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		07AF47CD0F6E3EFA00558BF4 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		07AF48FB0F6E5D6900558BF4 /* JJTextView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = JJTextView.h; sourceTree = "<group>"; };
@@ -100,6 +103,8 @@
 				2A37F4ACFDCFA73011CA2CEA /* TextDocument.m */,
 				07AF48FB0F6E5D6900558BF4 /* JJTextView.h */,
 				07AF48FC0F6E5D6900558BF4 /* JJTextView.mm */,
+				074880B410636E6900C91C75 /* ExtendedAttributes.h */,
+				074880B510636E6900C91C75 /* ExtendedAttributes.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -197,6 +202,7 @@
 				8D15AC320486D014006FF6A4 /* main.m in Sources */,
 				07AF47CE0F6E3EFA00558BF4 /* AppController.m in Sources */,
 				07AF48FD0F6E5D6900558BF4 /* JJTextView.mm in Sources */,
+				074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +295,7 @@
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

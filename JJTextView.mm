@@ -42,7 +42,8 @@
 
 - (void) dealloc
 {
-    textLines.clear();
+    [self removeAllLines];
+    [document saveMetaData];
     [super dealloc];
 }
 
@@ -72,7 +73,6 @@
                                   contentSize.height - textInset.height);
 
     CFRange range, frameRange;
-    CGPoint origins[kMaxLinesPerFrame];
     JJLineData lineData = { NULL, CGPointMake(0, 0) };
 
     [self removeAllLines];
@@ -85,22 +85,17 @@
 
         CTFrameRef frame = CTFramesetterCreateFrame(framesetter, range, path, NULL);
         frameRange = CTFrameGetVisibleStringRange(frame);
-
         CFArrayRef lines = CTFrameGetLines(frame);
         CFIndex i, total = CFArrayGetCount(lines);
         CGFloat y = frameRect.origin.y;
-
-        CTFrameGetLineOrigins(frame, CFRangeMake(0, MAX_LINES(total)), origins);
-
         for (i = 0; i < total; i++)
         {
             lineData.line = (CTLineRef) CFRetain(CFArrayGetValueAtIndex(lines, i));
             // NSLog(@"y = %g\n", y);
-            lineData.origin = CGPointMake(frameRect.origin.x + origins[i].x, y + lineAscent);
+            lineData.origin = CGPointMake(frameRect.origin.x, y + lineAscent);
             y += lineHeight;
             textLines.push_back(lineData);
         }
-
 #if 0
         NSLog(@"frameRange: %ld, %ld, %@",
               frameRange.location, frameRange.length,
@@ -108,7 +103,6 @@
 #endif
         frameRect.origin.y = y;
         frameRect.size.height = contentSize.height;
-
         CFRelease(path);
         CFRelease(frame);
     }
@@ -164,6 +158,7 @@
         CTLineDraw(lineData.line, context);
     }
 
+    [document setLastReadLine: [self lineBefore: [[self enclosingScrollView] documentVisibleRect].origin.y]];
     // NSLog(@"drawLines from: %u to %u", from, i);
 }
 
@@ -248,6 +243,12 @@
 - (void) viewDidEndLiveResize
 {
     [self invalidateLayout];
+}
+
+- (void) scrollToLine: (NSUInteger) line
+{
+    if (line > 0 && line < textLines.size())
+        [self scrollTo: textLines[line].origin.y];
 }
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "AppController.h"
+#import "TextDocument.h"
 
 int hexNum(char ch)
 {
@@ -122,6 +123,16 @@ NSString *encodeColor(NSColor *color)
 
     if ([oldFont pointSize] != [newFont pointSize])
         [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+    NSDocumentController *controller = [NSDocumentController sharedDocumentController];
+
+    for (id document in [controller documents])
+    {
+        [(TextDocument *) document saveMetaData];
+    }
 }
 
 @end

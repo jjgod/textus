@@ -8,7 +8,10 @@
 
 #import "AppController.h"
 #import "TextDocument.h"
+#import "ExtendedAttributes.h"
 #import <CommonCrypto/CommonDigest.h>
+
+#define kLastReadLineKey @"org.jjgod.textus.lastReadLine"
 
 @interface NSData (NSData_MD5Extensions)
 
@@ -40,6 +43,7 @@
 @implementation TextDocument
 
 @synthesize fileContents;
+@synthesize lastReadLine;
 
 - (id) init
 {
@@ -48,6 +52,7 @@
         GB18030Encoding = 
             CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
         fileContents = nil;
+        lastReadLine = 0;
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
@@ -76,6 +81,11 @@
     [super dealloc];
 }
 
+- (void) saveMetaData
+{
+    [[self fileURL] setUnsignedInteger: lastReadLine forXattrKey: kLastReadLineKey];
+}
+
 - (NSString *) windowNibName
 {
     return @"TextDocument";
@@ -87,7 +97,10 @@
 
     [textView setDocument: self];
     if (fileContents)
+    {
         [textView invalidateLayout];
+        [textView scrollToLine: lastReadLine];
+    }
 }
 
 - (NSData *) dataOfType: (NSString *) typeName
@@ -117,23 +130,38 @@
     BOOL readSuccess = NO;
     NSString *contents;
     NSData *data = [NSData dataWithContentsOfURL: absoluteURL];
+    NSStringEncoding expectedEncoding;
 
     NSLog(@"hash: %@", [data MD5Hash]);
 
-    contents = [[NSString alloc] initWithData: data
-                                     encoding: NSUTF8StringEncoding];
-    if (! contents)
+    expectedEncoding = [absoluteURL textEncoding];
+    if (expectedEncoding)
         contents = [[NSString alloc] initWithData: data
-                                         encoding: GB18030Encoding];
+                                         encoding: expectedEncoding];
+    else
+    {
+        contents = [[NSString alloc] initWithData: data
+                                         encoding: NSUTF8StringEncoding];
+        if (! contents)
+            contents = [[NSString alloc] initWithData: data
+                                             encoding: GB18030Encoding];
+    }
 
     if (contents)
     {
+        if (fileContents)
+            [fileContents release];
         // Remove DOS line endings
         fileContents = [[NSMutableAttributedString alloc] initWithString:
                                 [contents stringByReplacingOccurrencesOfString: @"\r"
                                                                     withString: @""]
                                                               attributes: [self attributesForText]];
         [contents release];
+
+        if ([[absoluteURL allXattrKeys] containsObject: kLastReadLineKey])
+            lastReadLine = [absoluteURL unsignedIntegerFromXattrKey: kLastReadLineKey];
+
+        NSLog(@"lastReadLine = %d", lastReadLine);
         readSuccess = YES;
     }
 

@@ -60,6 +60,7 @@
                                          atIndex: 0
                                   effectiveRange: NULL];
     CGFloat lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
+    CGFloat lineAscent = CTFontGetAscent(font);
     lineHeight *= [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
 
     // Create the framesetter with the attributed string.
@@ -72,8 +73,6 @@
 
     CFRange range, frameRange;
     CGPoint origins[kMaxLinesPerFrame];
-    CGFloat ascent, descent, leading;
-    ascent = descent = leading = 0;
     JJLineData lineData = { NULL, CGPointMake(0, 0) };
 
     [self removeAllLines];
@@ -96,9 +95,9 @@
         for (i = 0; i < total; i++)
         {
             lineData.line = (CTLineRef) CFRetain(CFArrayGetValueAtIndex(lines, i));
-            y += lineHeight;
             // NSLog(@"y = %g\n", y);
-            lineData.origin = CGPointMake(frameRect.origin.x + origins[i].x, y);
+            lineData.origin = CGPointMake(frameRect.origin.x + origins[i].x, y + lineAscent);
+            y += lineHeight;
             textLines.push_back(lineData);
         }
 
@@ -107,11 +106,7 @@
               frameRange.location, frameRange.length,
               NSStringFromRect(NSRectFromCGRect(frameRect)));
 #endif
-        // range.location += frameRange.length;
-        if (lineData.line)
-            CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
-
-        frameRect.origin.y = lineData.origin.y;
+        frameRect.origin.y = y;
         frameRect.size.height = contentSize.height;
 
         CFRelease(path);
@@ -164,6 +159,7 @@
     {
         lineData = textLines[i];
 
+        // NSRectFill(NSMakeRect(lineData.origin.x, lineData.origin.y, 20, 1.5));
         CGContextSetTextPosition(context, lineData.origin.x, lineData.origin.y);
         CTLineDraw(lineData.line, context);
     }

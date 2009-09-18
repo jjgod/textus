@@ -43,13 +43,12 @@
 - (void) dealloc
 {
     [self removeAllLines];
-    [document saveMetaData];
     [super dealloc];
 }
 
 - (void) invalidateLayout
 {
-    NSMutableAttributedString *text = [document fileContents];
+    NSAttributedString *text = [document fileContents];
     clock_t startTime = clock(), duration;
 
     if (! text)
@@ -115,6 +114,71 @@
     NSRect newFrame = [self frame];
     newFrame.size.height = frameRect.origin.y + textInset.height;
 
+    [self setFrame: newFrame];
+    [self setNeedsDisplay: YES];
+}
+
+- (void) doPartialLayoutWithMaximumHeight: (CGFloat) height aroundLine: (NSUInteger) line
+{
+    NSString *plainText = [document fileContentsInPlainText];
+    NSAttributedString *text = [document fileContents];
+    clock_t startTime = clock(), duration;
+
+    if (! text)
+        return;
+
+    NSSize contentSize = [[self enclosingScrollView] contentSize];
+    NSDictionary *attributes = [document attributesForText];
+    CTFontRef font = (CTFontRef) [attributes objectForKey: (NSString *) kCTFontAttributeName];
+    CGFloat lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
+    CGFloat lineAscent = CTFontGetAscent(font);
+    lineHeight *= [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
+
+    NSRange partRange = NSMakeRange(0, 2048);
+    NSRange lineRange = [plainText lineRangeForRange: partRange];
+    
+    NSLog(@"lineRange: %@", NSStringFromRange(lineRange));
+    
+    // Create the framesetter with the attributed string.
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)
+                                                                           [text attributedSubstringFromRange: lineRange]);
+
+    CGRect frameRect = CGRectMake(textInset.width, textInset.height,
+                                  contentSize.width - 2 * textInset.width - [NSScroller scrollerWidth],
+                                  contentSize.height);
+    
+    CFRange range, frameRange;
+    JJLineData lineData = { NULL, CGPointMake(0, 0) };
+    
+    [self removeAllLines];
+
+    range = frameRange = CFRangeMake(0, 0);
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddRect(path, NULL, frameRect);
+
+    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, range, path, NULL);
+    frameRange = CTFrameGetVisibleStringRange(frame);
+    CFArrayRef lines = CTFrameGetLines(frame);
+    CFIndex i, total = CFArrayGetCount(lines);
+    CGFloat y = frameRect.origin.y;
+    for (i = 0; i < total; i++)
+    {
+        lineData.line = (CTLineRef) CFRetain(CFArrayGetValueAtIndex(lines, i));
+        lineData.origin = CGPointMake(frameRect.origin.x, y + lineAscent);
+        y += lineHeight;
+        textLines.push_back(lineData);
+    }
+
+    CFRelease(path);
+    CFRelease(frame);
+    CFRelease(framesetter);
+    
+    duration = clock() - startTime;
+    NSLog(@"layout time = %g secs", (double) duration / (double) CLOCKS_PER_SEC);
+    
+    NSRect newFrame = [self frame];
+    newFrame.size.height = height;
+    
     [self setFrame: newFrame];
     [self setNeedsDisplay: YES];
 }

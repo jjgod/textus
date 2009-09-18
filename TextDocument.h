@@ -18,6 +18,7 @@
 
 - (void) invalidateLayout;
 - (void) scrollToLine: (NSUInteger) line;
+- (void) doPartialLayoutWithMaximumHeight: (CGFloat) height aroundLine: (NSUInteger) line;
 
 @end
 
@@ -26,12 +27,15 @@
     IBOutlet JJTextView *textView;
     NSStringEncoding GB18030Encoding;
     NSMutableAttributedString *fileContents;
-    NSUInteger lastReadLine;
+    NSString *fileContentsInPlainText;
+    NSUInteger lastReadLine, lastLayoutHeight;
 }
 
 @property (retain) NSMutableAttributedString *fileContents;
-@property (assign) NSUInteger lastReadLine;
+@property (retain) NSString *fileContentsInPlainText;
+@property (assign) NSUInteger lastReadLine, lastLayoutHeight;
 
+- (NSDictionary *) attributesForText;
 - (void) saveMetaData;
 
 @end

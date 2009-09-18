@@ -11,7 +11,9 @@
 #import "ExtendedAttributes.h"
 #import <CommonCrypto/CommonDigest.h>
 
-#define kLastReadLineKey @"org.jjgod.textus.lastReadLine"
+#define kLastReadLineKey    @"org.jjgod.textus.lastReadLine"
+#define kLastLayoutHeight   @"org.jjgod.textus.lastLayoutHeight"
+#define kHashKey            @"org.jjgod.textus.hash"
 
 @interface NSData (NSData_MD5Extensions)
 
@@ -42,8 +44,8 @@
 
 @implementation TextDocument
 
-@synthesize fileContents;
-@synthesize lastReadLine;
+@synthesize fileContents, fileContentsInPlainText;
+@synthesize lastReadLine, lastLayoutHeight;
 
 - (id) init
 {
@@ -52,7 +54,7 @@
         GB18030Encoding = 
             CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
         fileContents = nil;
-        lastReadLine = 0;
+        lastReadLine = lastLayoutHeight = 0;
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
@@ -64,6 +66,12 @@
                           context: nil];
     }
     return self;
+}
+
+- (void) close
+{
+    [self saveMetaData];
+    [super close];
 }
 
 - (void) dealloc
@@ -83,7 +91,9 @@
 
 - (void) saveMetaData
 {
-    [[self fileURL] setUnsignedInteger: lastReadLine forXattrKey: kLastReadLineKey];
+    NSLog(@"saveMetaData");
+    NSURL *fileURL = [self fileURL];
+    [fileURL setUnsignedInteger: lastReadLine forXattrKey: kLastReadLineKey];
 }
 
 - (NSString *) windowNibName
@@ -98,8 +108,21 @@
     [textView setDocument: self];
     if (fileContents)
     {
-        [textView invalidateLayout];
-        [textView scrollToLine: lastReadLine];
+#ifdef ENABLE_PARTIAL_LAYOUT
+        if (lastLayoutHeight > 0)
+        {
+            [textView doPartialLayoutWithMaximumHeight: (CGFloat) lastLayoutHeight
+                                            aroundLine: lastReadLine];
+        } else
+        {
+#endif
+            [textView invalidateLayout];
+            [[self fileURL] setUnsignedInteger: (NSUInteger) [textView frame].size.height
+                                   forXattrKey: kLastLayoutHeight];
+            [textView scrollToLine: lastReadLine];
+#ifdef ENABLE_PARTIAL_LAYOUT
+        }
+#endif
     }
 }
 
@@ -132,8 +155,6 @@
     NSData *data = [NSData dataWithContentsOfURL: absoluteURL];
     NSStringEncoding expectedEncoding;
 
-    NSLog(@"hash: %@", [data MD5Hash]);
-
     expectedEncoding = [absoluteURL textEncoding];
     if (expectedEncoding)
         contents = [[NSString alloc] initWithData: data
@@ -151,6 +172,8 @@
     {
         if (fileContents)
             [fileContents release];
+
+        [self setFileContentsInPlainText: contents];
         // Remove DOS line endings
         fileContents = [[NSMutableAttributedString alloc] initWithString:
                                 [contents stringByReplacingOccurrencesOfString: @"\r"
@@ -158,8 +181,19 @@
                                                               attributes: [self attributesForText]];
         [contents release];
 
-        if ([[absoluteURL allXattrKeys] containsObject: kLastReadLineKey])
+        NSArray *keys = [absoluteURL allXattrKeys];
+        NSString *hash = [data MD5Hash];
+
+        if ([keys containsObject: kLastReadLineKey])
             lastReadLine = [absoluteURL unsignedIntegerFromXattrKey: kLastReadLineKey];
+
+        if ([keys containsObject: kHashKey] && [[absoluteURL stringFromXattrKey: kHashKey] isEqual: hash])
+        {
+            NSLog(@"loading previous layout results...");
+            lastLayoutHeight = [absoluteURL unsignedIntegerFromXattrKey: kLastLayoutHeight];
+        }
+        else
+            [absoluteURL setString: hash forXattrKey: kHashKey];
 
         NSLog(@"lastReadLine = %d", lastReadLine);
         readSuccess = YES;

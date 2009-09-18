@@ -19,8 +19,10 @@ typedef struct LineData {
 @interface TextDocument : NSDocument
 
 @property (retain) NSMutableAttributedString *fileContents;
+@property (retain) NSString *fileContentsInPlainText;
 @property (assign) NSUInteger lastReadLine;
 
+- (NSDictionary *) attributesForText;
 - (void) saveMetaData;
 
 @end
@@ -36,5 +38,6 @@ typedef struct LineData {
 
 - (void) invalidateLayout;
 - (void) scrollToLine: (NSUInteger) line;
+- (void) doPartialLayoutWithMaximumHeight: (CGFloat) height aroundLine: (NSUInteger) line;
 
 @end

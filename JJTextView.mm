@@ -22,7 +22,7 @@
 {
     if ((self = [super initWithFrame: frameRect]))
     {
-        textInset = NSMakeSize(20, 20);
+        textInset = NSMakeSize(50, 50);
         textLines.clear();
     }
     return self;
@@ -56,6 +56,11 @@
 
     NSSize contentSize = [[self enclosingScrollView] contentSize];
     NSLog(@"Original content size: %@", NSStringFromSize(contentSize));
+    CTFontRef font = (CTFontRef) [text attribute: (NSString *) kCTFontAttributeName
+                                         atIndex: 0
+                                  effectiveRange: NULL];
+    CGFloat lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
+    lineHeight *= [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
 
     // Create the framesetter with the attributed string.
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) text);
@@ -84,17 +89,16 @@
 
         CFArrayRef lines = CTFrameGetLines(frame);
         CFIndex i, total = CFArrayGetCount(lines);
-        CGFloat y;
+        CGFloat y = frameRect.origin.y;
 
         CTFrameGetLineOrigins(frame, CFRangeMake(0, MAX_LINES(total)), origins);
 
         for (i = 0; i < total; i++)
         {
             lineData.line = (CTLineRef) CFRetain(CFArrayGetValueAtIndex(lines, i));
-            y = frameRect.origin.y + frameRect.size.height - origins[i].y;
+            y += lineHeight;
             // NSLog(@"y = %g\n", y);
-            lineData.origin = CGPointMake(frameRect.origin.x + origins[i].x,
-                                          y);
+            lineData.origin = CGPointMake(frameRect.origin.x + origins[i].x, y);
             textLines.push_back(lineData);
         }
 
@@ -107,7 +111,7 @@
         if (lineData.line)
             CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
 
-        frameRect.origin.y = lineData.origin.y + descent + leading;
+        frameRect.origin.y = lineData.origin.y;
         frameRect.size.height = contentSize.height;
 
         CFRelease(path);
@@ -149,7 +153,7 @@
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
 
-    NSLog(@"drawRect: %@", NSStringFromRect(rect));
+    // NSLog(@"drawRect: %@", NSStringFromRect(rect));
 
     NSUInteger i, from, total = textLines.size();
     JJLineData lineData = { NULL, CGPointZero };

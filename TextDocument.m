@@ -102,19 +102,11 @@
 - (NSDictionary *) attributesForText
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    CGFloat lineHeightMultiple = [defaults doubleForKey: @"lineHeight"];
-
-    CTParagraphStyleSetting settings[] = {
-        { kCTParagraphStyleSpecifierLineHeightMultiple, sizeof(CGFloat), &lineHeightMultiple },
-    };
-    CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(settings, sizeof(settings) / sizeof(settings[0]));
     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
                                 [NSFont fontWithName: [defaults stringForKey: @"fontName"]
                                                 size: [defaults doubleForKey: @"fontSize"]],
                                 (NSString *) kCTFontAttributeName,
-                                paragraphStyle, (NSString *) kCTParagraphStyleAttributeName,
                                 nil];
-    CFRelease(paragraphStyle);
     return attributes;
 }
 

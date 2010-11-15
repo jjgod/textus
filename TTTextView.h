@@ -16,25 +16,16 @@ typedef struct LineData {
     CGPoint   origin;
 } JJLineData;
 
-@interface TextDocument : NSDocument
+@class TTDocument;
 
-@property (retain) NSMutableAttributedString *fileContents;
-@property (retain) NSString *fileContentsInPlainText;
-@property (assign) NSUInteger lastReadLine;
-
-- (NSDictionary *) attributesForText;
-- (void) saveMetaData;
-
-@end
-
-@interface JJTextView : NSView {
+@interface TTTextView : NSView {
     NSSize textInset;
     vector<JJLineData> textLines;
-    TextDocument *document;
+    TTDocument *document;
 }
 
 @property (assign) NSSize textInset;
-@property (assign) TextDocument *document;
+@property (assign) TTDocument *document;
 
 - (void) invalidateLayout;
 - (void) scrollToLine: (NSUInteger) line;

@@ -22,7 +22,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
-			<string>TextDocument</string>
+			<string>TTDocument</string>
 			<key>NSTypeName</key>
 			<string>Plain Text Format</string>
 		</dict>

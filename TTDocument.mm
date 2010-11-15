@@ -1,5 +1,5 @@
 //
-//  MyDocument.m
+//  TTDocument.m
 //  Textus
 //
 //  Created by Jjgod Jiang on 2/16/09.
@@ -7,7 +7,7 @@
 //
 
 #import "AppController.h"
-#import "TextDocument.h"
+#import "TTDocument.h"
 #import "ExtendedAttributes.h"
 #import <CommonCrypto/CommonDigest.h>
 
@@ -42,7 +42,7 @@
 
 @end
 
-@implementation TextDocument
+@implementation TTDocument
 
 @synthesize fileContents, fileContentsInPlainText;
 @synthesize lastReadLine, lastLayoutHeight;
@@ -98,7 +98,7 @@
 
 - (NSString *) windowNibName
 {
-    return @"TextDocument";
+    return @"TTDocument";
 }
 
 - (void) windowControllerDidLoadNib: (NSWindowController *) aController

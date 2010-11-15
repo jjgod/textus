@@ -6,14 +6,15 @@
 //  Copyright 2009 Jjgod Jiang. All rights reserved.
 //
 
-#import "JJTextView.h"
+#import "TTTextView.h"
+#import "TTDocument.h"
 #import <time.h>
 
 #define kMaxLinesPerFrame 256
 
 #define MAX_LINES(total)    (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
 
-@implementation JJTextView
+@implementation TTTextView
 
 @synthesize textInset;
 @synthesize document;

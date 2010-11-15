@@ -7,7 +7,6 @@
 //
 
 #import "AppController.h"
-#import "TextDocument.h"
 
 int hexNum(char ch)
 {

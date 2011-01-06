@@ -12,15 +12,14 @@
 @interface TTDocument : NSDocument
 {
     IBOutlet TTTextView *textView;
-    NSStringEncoding GB18030Encoding;
     NSMutableAttributedString *fileContents;
     NSString *fileContentsInPlainText;
-    NSUInteger lastReadLine, lastLayoutHeight;
+    NSUInteger lastReadLocation;
 }
 
 @property (retain) NSMutableAttributedString *fileContents;
 @property (retain) NSString *fileContentsInPlainText;
-@property (assign) NSUInteger lastReadLine, lastLayoutHeight;
+@property (assign) NSUInteger lastReadLocation;
 
 - (NSDictionary *) attributesForText;
 - (void) saveMetaData;

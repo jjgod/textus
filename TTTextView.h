@@ -28,6 +28,6 @@ typedef struct LineData {
 @property (assign) TTDocument *document;
 
 - (void) invalidateLayout;
-- (void) scrollToLine: (NSUInteger) line;
+- (void) scrollToLocation: (NSUInteger) location;
 
 @end

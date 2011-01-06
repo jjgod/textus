@@ -134,14 +134,19 @@
     CGFloat bottom = rect.origin.y + rect.size.height;
 
     from = [self lineBefore: rect.origin.y];
+    NSUInteger firstLineInView = [self lineBefore: [[self enclosingScrollView] documentVisibleRect].origin.y] + 1;
+    if (firstLineInView < total)
+    {
+        CFRange range = CTLineGetStringRange(textLines[firstLineInView].line);
+        document.lastReadLocation = range.location;
+    }
+
     for (i = from; i < total && lineData.origin.y <= bottom; i++)
     {
         lineData = textLines[i];
         CGContextSetTextPosition(context, lineData.origin.x, lineData.origin.y);
         CTLineDraw(lineData.line, context);
     }
-
-    [document setLastReadLine: [self lineBefore: [[self enclosingScrollView] documentVisibleRect].origin.y]];
 }
 
 - (void) scrollTo: (float) y
@@ -171,22 +176,22 @@
         case NSDownArrowFunctionKey:
             [self scrollBy: 100.0];
             break;
-            
+
         case NSUpArrowFunctionKey:
             [self scrollBy: -100.0];
             break;
-            
+
         case ' ':
         case NSPageDownFunctionKey:
             [self scrollBy: pageHeight];
             break;
-            
+
         case NSPageUpFunctionKey:
             [self scrollBy: -pageHeight];
             break;
-            
+
         case NSEndFunctionKey:
-            y = NSMaxY([[[self enclosingScrollView] documentView] frame]) - 
+            y = NSMaxY([[[self enclosingScrollView] documentView] frame]) -
             NSHeight([[[self enclosingScrollView] contentView] bounds]);
             [self scrollTo: y];
             break;
@@ -202,16 +207,16 @@
     return YES;
 }
 
-- (void) keyDown: (NSEvent *) event 
+- (void) keyDown: (NSEvent *) event
 {
     int characterIndex;
     int charactersInEvent;
 
     charactersInEvent = [[event characters] length];
-    for (characterIndex = 0; characterIndex < charactersInEvent;  
+    for (characterIndex = 0; characterIndex < charactersInEvent;
          characterIndex++) {
         int ch = [[event characters] characterAtIndex:characterIndex];
-        
+
         if ([self processKey: ch] == NO)
             [self interpretKeyEvents:[NSArray arrayWithObject:event]];
     }
@@ -227,10 +232,27 @@
     [self invalidateLayout];
 }
 
-- (void) scrollToLine: (NSUInteger) line
+- (void) scrollToLocation: (NSUInteger) location
 {
-    if (line > 0 && line < textLines.size())
-        [self scrollTo: textLines[line].origin.y];
+    for (NSUInteger i = 0; i < textLines.size(); i++)
+    {
+        CFRange range = CTLineGetStringRange(textLines[i].line);
+        if (range.location >= location)
+        {
+            CGFloat y = 0.0;
+            if (i > 0) {
+                CGFloat lineHeight = textLines[i].origin.y - textLines[i - 1].origin.y;
+                CTFontRef font = (CTFontRef) [[document fileContents] attribute: (NSString *) kCTFontAttributeName
+                                                                        atIndex: 0
+                                                                 effectiveRange: NULL];
+                CGFloat padding = (lineHeight - CTFontGetAscent(font) - CTFontGetDescent(font)) / 2;
+                y = textLines[i].origin.y - CTFontGetAscent(font) - padding;
+            }
+            [self scrollTo: y];
+            return;
+        }
+    }
+    [self scrollTo: 0];
 }
 
 @end

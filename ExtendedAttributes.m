@@ -54,32 +54,6 @@
     setxattr(path, [key UTF8String], buf, strlen(buf), 0, 0);
 }
 
-- (NSStringEncoding) textEncoding
-{
-    const char *path = [[self path] fileSystemRepresentation];
-    char dataBuf[256];
-    size_t dataSize = getxattr(path, "com.apple.TextEncoding", dataBuf, 256, 0, 0);
-
-    if (dataSize > 0)
-    {
-        dataBuf[dataSize] = '\0';
-        NSString *encodingStr = [NSString stringWithUTF8String: dataBuf];
-        NSArray *components = [encodingStr componentsSeparatedByString: @";"];
-        if ([components count])
-            encodingStr = [components objectAtIndex: 0];
-
-        if (! encodingStr)
-            return 0;
-
-        NSLog(@"get expected encoding: %@", encodingStr);
-        CFStringEncoding cfenc = CFStringConvertIANACharSetNameToEncoding((CFStringRef) encodingStr);
-        return CFStringConvertEncodingToNSStringEncoding(cfenc);
-    }
-
-    // 0 for unknown encoding
-    return 0;
-}
-
 // -----------------------------------------------------------------------------
 //      setData:forKey:atPath:
 //              Set the xattr with name key to a block of raw binary data.

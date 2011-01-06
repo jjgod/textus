@@ -3,7 +3,7 @@
 //  Textus
 //
 //  Created by Jjgod Jiang on 2/16/09.
-//  Copyright Jjgod Jiang 2009 . All rights reserved.
+//  Copyright Jjgod Jiang 2009-2010. All rights reserved.
 //
 
 #import "AppController.h"
@@ -11,7 +11,7 @@
 #import "ExtendedAttributes.h"
 #import "chardetect.h"
 
-#define kLastReadLineKey    @"org.jjgod.textus.lastReadLine"
+#define kLastReadLocationKey    @"org.jjgod.textus.lastReadLocation"
 
 #define BUFSIZE	4096
 
@@ -36,7 +36,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
     if (ret != CHARDET_RESULT_OK)
         return NSUTF8StringEncoding;
 
-    NSLog(@"detected encoding: %s", charset);
     charsetStr = CFStringCreateWithCString(NULL, charset, kCFStringEncodingUTF8);
     cfenc = CFStringConvertIANACharSetNameToEncoding(charsetStr);
     CFRelease(charsetStr);
@@ -49,16 +48,14 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 @implementation TTDocument
 
 @synthesize fileContents, fileContentsInPlainText;
-@synthesize lastReadLine, lastLayoutHeight;
+@synthesize lastReadLocation;
 
 - (id) init
 {
     self = [super init];
     if (self) {
-        GB18030Encoding =
-            CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
         fileContents = nil;
-        lastReadLine = lastLayoutHeight = 0;
+        lastReadLocation = 0;
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
@@ -96,7 +93,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 - (void) saveMetaData
 {
     NSURL *fileURL = [self fileURL];
-    [fileURL setUnsignedInteger: lastReadLine forXattrKey: kLastReadLineKey];
+    [fileURL setUnsignedInteger: lastReadLocation forXattrKey: kLastReadLocationKey];
 }
 
 - (NSString *) windowNibName
@@ -112,7 +109,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
     if (fileContents)
     {
         [textView invalidateLayout];
-        [textView scrollToLine: lastReadLine];
+        [textView scrollToLocation: lastReadLocation];
     }
 }
 
@@ -142,36 +139,28 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 {
     NSString *contents;
     NSData *data = [NSData dataWithContentsOfURL: absoluteURL];
-    NSStringEncoding expectedEncoding;
 
-    expectedEncoding = [absoluteURL textEncoding];
-    if (expectedEncoding)
-        contents = [[NSString alloc] initWithData: data
-                                         encoding: expectedEncoding];
-    else
-        contents = [[NSString alloc] initWithData: data
-                                         encoding: detectedEncodingForData(data)];
-    if (contents)
-    {
-        if (fileContents)
-            [fileContents release];
+    contents = [[NSString alloc] initWithData: data
+                                     encoding: detectedEncodingForData(data)];
+    if (! contents)
+        return NO;
 
-        [self setFileContentsInPlainText: contents];
-        // Remove DOS line endings
-        fileContents = [[NSMutableAttributedString alloc] initWithString:
-                                [contents stringByReplacingOccurrencesOfString: @"\r"
-                                                                    withString: @""]
-                                                              attributes: [self attributesForText]];
-        [contents release];
+    if (fileContents)
+        [fileContents release];
 
-        NSArray *keys = [absoluteURL allXattrKeys];
-        if ([keys containsObject: kLastReadLineKey])
-            lastReadLine = [absoluteURL unsignedIntegerFromXattrKey: kLastReadLineKey];
+    [self setFileContentsInPlainText: contents];
+    // Remove DOS line endings
+    fileContents = [[NSMutableAttributedString alloc] initWithString:
+                            [contents stringByReplacingOccurrencesOfString: @"\r"
+                                                                withString: @""]
+                                                          attributes: [self attributesForText]];
+    [contents release];
 
-        return YES;
-    }
+    NSArray *keys = [absoluteURL allXattrKeys];
+    if ([keys containsObject: kLastReadLocationKey])
+        lastReadLocation = [absoluteURL unsignedIntegerFromXattrKey: kLastReadLocationKey];
 
-    return NO;
+    return YES;
 }
 
 - (void) observeValueForKeyPath: (NSString *) keyPath

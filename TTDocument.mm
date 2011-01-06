@@ -12,35 +12,6 @@
 #import <CommonCrypto/CommonDigest.h>
 
 #define kLastReadLineKey    @"org.jjgod.textus.lastReadLine"
-#define kLastLayoutHeight   @"org.jjgod.textus.lastLayoutHeight"
-#define kHashKey            @"org.jjgod.textus.hash"
-
-@interface NSData (NSData_MD5Extensions)
-
-- (NSString *) MD5Hash;
-
-@end
-
-@implementation NSData (NSData_MD5Extensions)
-
-- (NSString *) MD5Hash
-{
-    CC_MD5_CTX theContext;
-    int i;
-    unsigned char digest[CC_MD5_DIGEST_LENGTH];
-
-    CC_MD5_Init(&theContext);
-    CC_MD5_Update(&theContext, [self bytes], [self length]);
-    CC_MD5_Final(digest, &theContext);
-
-    NSMutableString *hash = [NSMutableString stringWithCapacity: CC_MD5_DIGEST_LENGTH * 2];
-    for (i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-        [hash appendFormat: @"%02x", digest[i]];
-
-    return hash;
-}
-
-@end
 
 @implementation TTDocument
 
@@ -91,7 +62,6 @@
 
 - (void) saveMetaData
 {
-    NSLog(@"saveMetaData");
     NSURL *fileURL = [self fileURL];
     [fileURL setUnsignedInteger: lastReadLine forXattrKey: kLastReadLineKey];
 }
@@ -108,21 +78,8 @@
     [textView setDocument: self];
     if (fileContents)
     {
-#ifdef ENABLE_PARTIAL_LAYOUT
-        if (lastLayoutHeight > 0)
-        {
-            [textView doPartialLayoutWithMaximumHeight: (CGFloat) lastLayoutHeight
-                                            aroundLine: lastReadLine];
-        } else
-        {
-#endif
-            [textView invalidateLayout];
-            [[self fileURL] setUnsignedInteger: (NSUInteger) [textView frame].size.height
-                                   forXattrKey: kLastLayoutHeight];
-            [textView scrollToLine: lastReadLine];
-#ifdef ENABLE_PARTIAL_LAYOUT
-        }
-#endif
+        [textView invalidateLayout];
+        [textView scrollToLine: lastReadLine];
     }
 }
 
@@ -182,20 +139,9 @@
         [contents release];
 
         NSArray *keys = [absoluteURL allXattrKeys];
-        NSString *hash = [data MD5Hash];
-
         if ([keys containsObject: kLastReadLineKey])
             lastReadLine = [absoluteURL unsignedIntegerFromXattrKey: kLastReadLineKey];
 
-        if ([keys containsObject: kHashKey] && [[absoluteURL stringFromXattrKey: kHashKey] isEqual: hash])
-        {
-            NSLog(@"loading previous layout results...");
-            lastLayoutHeight = [absoluteURL unsignedIntegerFromXattrKey: kLastLayoutHeight];
-        }
-        else
-            [absoluteURL setString: hash forXattrKey: kHashKey];
-
-        NSLog(@"lastReadLine = %d", lastReadLine);
         readSuccess = YES;
     }
 
@@ -207,8 +153,6 @@
                          change: (NSDictionary *) change
                         context: (void *) context
 {
-    NSLog(@"keyPath = %@", keyPath);
-
     if ([keyPath isEqual: @"lineHeight"] ||
         [keyPath isEqual: @"fontName"] ||
         [keyPath isEqual: @"fontSize"])

@@ -29,6 +29,5 @@ typedef struct LineData {
 
 - (void) invalidateLayout;
 - (void) scrollToLine: (NSUInteger) line;
-- (void) doPartialLayoutWithMaximumHeight: (CGFloat) height aroundLine: (NSUInteger) line;
 
 @end

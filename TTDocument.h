@@ -1,5 +1,5 @@
 //
-//  MyDocument.h
+//  TTDocument.h
 //  Textus
 //
 //  Created by Jjgod Jiang on 2/16/09.

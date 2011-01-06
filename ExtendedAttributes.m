@@ -71,7 +71,6 @@
         if (! encodingStr)
             return 0;
 
-        NSLog(@"encodingStr = %@", encodingStr);
         CFStringEncoding cfenc = CFStringConvertIANACharSetNameToEncoding((CFStringRef) encodingStr);
         return CFStringConvertEncodingToNSStringEncoding(cfenc);        
     }

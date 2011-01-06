@@ -115,8 +115,6 @@ NSString *encodeColor(NSColor *color)
     NSFont *newFont = [sender convertFont: oldFont];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-    NSLog(@"changeFont = %@", newFont);
-
     if ([oldFont fontName] != [newFont fontName])
         [defaults setValue: [newFont fontName] forKey: @"fontName"];
 

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0728CDEC102817BC0060E2F2 /* Textus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0728CDEB102817BC0060E2F2 /* Textus.icns */; };
 		074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 074880B510636E6900C91C75 /* ExtendedAttributes.m */; };
+		0759B50A12D66C7C00EDB373 /* chardetect.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0759B50912D66C7C00EDB373 /* chardetect.a */; };
 		07AF47CE0F6E3EFA00558BF4 /* AppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07AF47CD0F6E3EFA00558BF4 /* AppController.m */; };
 		07AF48FD0F6E5D6900558BF4 /* TTTextView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AF48FC0F6E5D6900558BF4 /* TTTextView.mm */; };
 		1DDD582C0DA1D0D100B32029 /* TTDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* TTDocument.xib */; };
@@ -24,6 +25,7 @@
 		0728CDEB102817BC0060E2F2 /* Textus.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Textus.icns; sourceTree = "<group>"; };
 		074880B410636E6900C91C75 /* ExtendedAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedAttributes.h; sourceTree = "<group>"; };
 		074880B510636E6900C91C75 /* ExtendedAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendedAttributes.m; sourceTree = "<group>"; };
+		0759B50912D66C7C00EDB373 /* chardetect.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = chardetect.a; sourceTree = "<group>"; };
 		07AF47CC0F6E3EFA00558BF4 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		07AF47CD0F6E3EFA00558BF4 /* AppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppController.m; sourceTree = "<group>"; };
 		07AF48FB0F6E5D6900558BF4 /* TTTextView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = TTTextView.h; sourceTree = "<group>"; };
@@ -50,6 +52,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
+				0759B50A12D66C7C00EDB373 /* chardetect.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +63,7 @@
 			isa = PBXGroup;
 			children = (
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
+				0759B50912D66C7C00EDB373 /* chardetect.a */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -264,6 +268,10 @@
 				GCC_PREFIX_HEADER = Textus_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				PRODUCT_NAME = Textus;
 			};
 			name = Debug;
@@ -278,6 +286,10 @@
 				GCC_PREFIX_HEADER = Textus_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				PRODUCT_NAME = Textus;
 			};
 			name = Release;

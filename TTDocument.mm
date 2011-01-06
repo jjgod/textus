@@ -9,9 +9,42 @@
 #import "AppController.h"
 #import "TTDocument.h"
 #import "ExtendedAttributes.h"
-#import <CommonCrypto/CommonDigest.h>
+#import "chardetect.h"
 
 #define kLastReadLineKey    @"org.jjgod.textus.lastReadLine"
+
+#define BUFSIZE	4096
+
+/* Use universal charset detector to automatically determine which encoding
+ * we should use to open the URL */
+NSStringEncoding detectedEncodingForData(NSData *data)
+{
+    chardet_t chardetContext;
+    char      charset[CHARDET_MAX_ENCODING_NAME];
+    int       ret;
+
+    CFStringEncoding cfenc;
+    CFStringRef      charsetStr;
+
+    chardet_create(&chardetContext);
+    chardet_reset(chardetContext);
+    chardet_handle_data(chardetContext, (const char *) [data bytes],
+                        [data length] > BUFSIZE ? BUFSIZE : [data length]);
+    chardet_data_end(chardetContext);
+
+    ret = chardet_get_charset(chardetContext, charset, CHARDET_MAX_ENCODING_NAME);
+    if (ret != CHARDET_RESULT_OK)
+        return NSUTF8StringEncoding;
+
+    NSLog(@"detected encoding: %s", charset);
+    charsetStr = CFStringCreateWithCString(NULL, charset, kCFStringEncodingUTF8);
+    cfenc = CFStringConvertIANACharSetNameToEncoding(charsetStr);
+    CFRelease(charsetStr);
+
+    chardet_destroy(chardetContext);
+
+    return CFStringConvertEncodingToNSStringEncoding(cfenc);
+}
 
 @implementation TTDocument
 
@@ -22,7 +55,7 @@
 {
     self = [super init];
     if (self) {
-        GB18030Encoding = 
+        GB18030Encoding =
             CFStringConvertEncodingToNSStringEncoding(kCFStringEncodingGB_18030_2000);
         fileContents = nil;
         lastReadLine = lastLayoutHeight = 0;
@@ -107,7 +140,6 @@
               ofType: (NSString *) typeName
                error: (NSError **) outError
 {
-    BOOL readSuccess = NO;
     NSString *contents;
     NSData *data = [NSData dataWithContentsOfURL: absoluteURL];
     NSStringEncoding expectedEncoding;
@@ -117,14 +149,8 @@
         contents = [[NSString alloc] initWithData: data
                                          encoding: expectedEncoding];
     else
-    {
         contents = [[NSString alloc] initWithData: data
-                                         encoding: NSUTF8StringEncoding];
-        if (! contents)
-            contents = [[NSString alloc] initWithData: data
-                                             encoding: GB18030Encoding];
-    }
-
+                                         encoding: detectedEncodingForData(data)];
     if (contents)
     {
         if (fileContents)
@@ -142,10 +168,10 @@
         if ([keys containsObject: kLastReadLineKey])
             lastReadLine = [absoluteURL unsignedIntegerFromXattrKey: kLastReadLineKey];
 
-        readSuccess = YES;
+        return YES;
     }
 
-    return readSuccess;
+    return NO;
 }
 
 - (void) observeValueForKeyPath: (NSString *) keyPath

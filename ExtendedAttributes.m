@@ -29,7 +29,7 @@
         }
     }
 
-    return allKeys;    
+    return allKeys;
 }
 
 - (NSUInteger) unsignedIntegerFromXattrKey: (NSString *) key
@@ -37,7 +37,7 @@
     const char *path = [[self path] fileSystemRepresentation];
     char dataBuf[256];
     size_t dataSize = getxattr(path, [key UTF8String], dataBuf, 256, 0, 0);
-    
+
     if (dataSize)
     {
         dataBuf[dataSize] = '\0';
@@ -71,8 +71,9 @@
         if (! encodingStr)
             return 0;
 
+        NSLog(@"get expected encoding: %@", encodingStr);
         CFStringEncoding cfenc = CFStringConvertIANACharSetNameToEncoding((CFStringRef) encodingStr);
-        return CFStringConvertEncodingToNSStringEncoding(cfenc);        
+        return CFStringConvertEncodingToNSStringEncoding(cfenc);
     }
 
     // 0 for unknown encoding
@@ -109,11 +110,11 @@
 - (void) setString: (NSString *) str forXattrKey: (NSString *) key
 {
     NSData *data = [str dataUsingEncoding: NSUTF8StringEncoding];
-    
+
     if (!data)
         [NSException raise: NSCharacterConversionException format: @"Couldn't convert string to UTF8 for xattr storage."];
-    
-    [self setData: data forXattrKey: key];    
+
+    [self setData: data forXattrKey: key];
 }
 
 @end

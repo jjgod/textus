@@ -33,14 +33,13 @@ NSStringEncoding detectedEncodingForData(NSData *data)
     chardet_data_end(chardetContext);
 
     ret = chardet_get_charset(chardetContext, charset, CHARDET_MAX_ENCODING_NAME);
+    chardet_destroy(chardetContext);
     if (ret != CHARDET_RESULT_OK)
         return NSUTF8StringEncoding;
 
     charsetStr = CFStringCreateWithCString(NULL, charset, kCFStringEncodingUTF8);
     cfenc = CFStringConvertIANACharSetNameToEncoding(charsetStr);
     CFRelease(charsetStr);
-
-    chardet_destroy(chardetContext);
 
     return CFStringConvertEncodingToNSStringEncoding(cfenc);
 }

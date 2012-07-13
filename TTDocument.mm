@@ -56,6 +56,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
         fileContents = nil;
         lastReadLocation = 0;
 
+        linePrefixCharset = [NSCharacterSet characterSetWithCharactersInString: @"　 "];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
 
@@ -132,6 +133,79 @@ NSStringEncoding detectedEncodingForData(NSData *data)
     return attributes;
 }
 
+#define outputLine(output, line)           [output appendFormat: @"%@\n", line]
+#define outputParagraph(output, paragraph) do { \
+[output appendFormat: @"%@\n\n", paragraph]; \
+[paragraph release]; \
+paragraph = nil; \
+} while (0)
+
+- (NSString *) firstLine: (NSString *) line
+{
+    line = [line stringByTrimmingCharactersInSet: linePrefixCharset];
+
+    // Align first line with “「 optically
+    NSString *prefix = @"　　";
+    if (line.length > 0) {
+        UniChar ch = [line characterAtIndex: 0];
+        if (ch == 0x201C /* “ */ || ch == 0x300C /* 「 */)
+            prefix = @"　";
+    }
+
+    return [prefix stringByAppendingString: line];
+}
+
+- (void) outputTo: (NSMutableString *) output from: (NSString *) contents
+{
+    BOOL inParagraph = NO;
+    NSUInteger length = [contents length];
+    NSUInteger start = 0, end = 0;
+    NSRange range, lineRange;
+    NSString *line;
+    NSMutableString *paragraph = nil;
+    NSCharacterSet *newlineCharset = [NSCharacterSet newlineCharacterSet];
+
+    for (range = NSMakeRange(0, 0); end < length; range.location = end)
+    {
+        [contents getLineStart: &start
+                           end: &end
+                   contentsEnd: NULL
+                      forRange: range];
+        lineRange = NSMakeRange(start, end - start);
+        line = [[contents substringWithRange: lineRange] stringByTrimmingCharactersInSet: newlineCharset];
+        if (inParagraph)
+        {
+            if ([line length] == 0) {
+                inParagraph = NO;
+                outputParagraph(output, paragraph);
+            }
+            else if ([line hasPrefix: @"＝"] || [line hasPrefix: @"*"] || [line hasPrefix: @"＊"]) {
+                inParagraph = NO;
+                outputParagraph(output, paragraph);
+                outputLine(output, line);
+            }
+            else if ([line hasPrefix: @"　"] || [line hasPrefix: @"    "]) {
+                outputParagraph(output, paragraph);
+                paragraph = [[NSMutableString alloc] initWithString: [self firstLine: line]];
+            }
+            else
+                [paragraph appendString: line];
+        } else {
+            if ([line hasPrefix: @"　"] || [line hasPrefix: @"    "])
+            {
+                inParagraph = YES;
+                paragraph = [[NSMutableString alloc] initWithString: [self firstLine: line]];
+            } else {
+                outputLine(output, line);
+            }
+        }
+    }
+
+    if (inParagraph && paragraph && [paragraph length]) {
+        outputParagraph(output, paragraph);
+    }
+}
+
 - (BOOL) readFromURL: (NSURL *) absoluteURL
               ofType: (NSString *) typeName
                error: (NSError **) outError
@@ -147,8 +221,11 @@ NSStringEncoding detectedEncodingForData(NSData *data)
     if (fileContents)
         [fileContents release];
 
-    [self setFileContentsInPlainText: [contents stringByReplacingOccurrencesOfString: @"\r"
+    NSMutableString *wrappedText = [[NSMutableString alloc] init];
+    [self outputTo: wrappedText from: [contents stringByReplacingOccurrencesOfString: @"\r"
                                                                           withString: @""]];
+    [self setFileContentsInPlainText: wrappedText];
+    [wrappedText release];
     // Remove DOS line endings
     fileContents = [[NSMutableAttributedString alloc] initWithString: self.fileContentsInPlainText
                                                           attributes: [self attributesForText]];

@@ -93,12 +93,14 @@
         if (width <= maxWidth - fontSize) {
             if (secondCharInNextLineIndex < text.length) {
                 UniChar ch = CFStringGetCharacterAtIndex(str, secondCharInNextLineIndex);
+                // TODO: handle ⋯⋯” at the beginning of next line
                 if ((ch == 0xFF0C /* ， */ || ch == 0x3002 /* 。 */ ||
                      ch == 0x3001 /* 、 */ || ch == 0xFF01 /* ！ */ ||
                      ch == 0xFF1A /* ： */ || ch == 0xFF1B /* ； */ ||
-                     ch == 0x201D /* ” */)) {
+                     ch == 0x201D /* ” */) || ch == 0x201C /* “ */ ||
+                     ch == 0x300C /* 「 */ || ch == 0xFF1F /* ？ */) {
                     CFRelease(lineData.line);
-                    length += 2;
+                    length += (ch == 0x201C || ch == 0x300C) ? 1 : 2;
 
                     // For situations like "，”" or "。」", we need to extend the length one more char
                     // to include the quote
@@ -114,8 +116,8 @@
             if (start + length < text.length && CFStringGetCharacterAtIndex(str, start + length) == '\n')
                 length += 1;
         } else {
-            // Otherwise we can't do optical punctuation, do justified line instead
-            if (width / maxWidth > 0.85) {
+            // Otherwise we can't do optical punctuation or the beginning of a paragraph, do justified line instead
+            if (width / maxWidth > 0.85 && CFStringGetCharacterAtIndex(str, start) != 0x3000) {
                 CTLineRef justifiedLine = CTLineCreateJustifiedLine(lineData.line, 1.0, maxWidth);
                 CFRelease(lineData.line);
                 lineData.line = justifiedLine;

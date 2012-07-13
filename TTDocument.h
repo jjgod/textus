@@ -15,6 +15,7 @@
     NSMutableAttributedString *fileContents;
     NSString *fileContentsInPlainText;
     NSUInteger lastReadLocation;
+    NSCharacterSet *linePrefixCharset;
 }
 
 @property (retain) NSMutableAttributedString *fileContents;
@@ -23,5 +24,7 @@
 
 - (NSDictionary *) attributesForText;
 - (void) saveMetaData;
+- (NSString *) firstLine: (NSString *) line;
+- (void) outputTo: (NSMutableString *) output from: (NSString *) contents;
 
 @end

@@ -7,6 +7,8 @@
 //
 
 #import "AppController.h"
+#import "TTTextView.h"
+#import "TTDocument.h"
 
 int hexNum(char ch)
 {
@@ -58,6 +60,7 @@ NSString *encodeColor(NSColor *color)
     [appDefaults setValue: @"STKaiti" forKey: @"fontName"];
     [appDefaults setValue: [NSNumber numberWithDouble: 24.0] forKey: @"fontSize"];
     [appDefaults setValue: [NSNumber numberWithDouble: 1.1] forKey: @"lineHeight"];
+    [appDefaults setValue: [NSMutableDictionary dictionaryWithCapacity: 20] forKey:@"bookmarks"];
 
 	[defaults registerDefaults: appDefaults];
     [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues: appDefaults];
@@ -68,6 +71,26 @@ NSString *encodeColor(NSColor *color)
 {
     [[NSFontManager sharedFontManager] setSelectedFont: [self font]
                                             isMultiple: NO];
+    // load bookmarks into dictionary and insert them into menu
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    bookmarksDictionary = [[defaults dictionaryForKey: @"bookmarks"] mutableCopy];
+    if (!bookmarksDictionary)
+        bookmarksDictionary = [[NSMutableDictionary alloc] init];
+
+    for (NSString *path in [bookmarksDictionary allKeys]) {
+        NSString *name = [[path lastPathComponent] stringByDeletingPathExtension];
+        NSArray *indexes = [bookmarksDictionary objectForKey: path];
+        if (indexes.count > 1) {
+            NSUInteger length = [[indexes objectAtIndex: 0] unsignedIntegerValue];
+            for (NSUInteger i = 1; i < indexes.count; i++) {
+                NSUInteger location = [[indexes objectAtIndex: i] unsignedIntegerValue];
+                [bookmarksMenu addItemWithTitle: [name stringByAppendingFormat: @": %d%%",
+                                                  roundtol(location * 100.0 / length)]
+                                         action: @selector(gotoBookmark:)
+                                  keyEquivalent: @""];
+            }
+        }
+    }
 }
 
 - (NSFont *) font
@@ -120,6 +143,36 @@ NSString *encodeColor(NSColor *color)
 
     if ([oldFont pointSize] != [newFont pointSize])
         [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
+}
+
+- (IBAction) gotoBookmark:(id)sender
+{
+
+}
+
+- (IBAction) addBookmark:(id)sender
+{
+    if ([NSApp keyWindow]) {
+        TTTextView *textView = [[[[NSApp keyWindow].contentView subviews] objectAtIndex: 0] documentView];
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+        NSMutableArray *indexes = [bookmarksDictionary objectForKey: textView.document.fileURL.path];
+        if (!indexes) {
+            indexes = [[[NSMutableArray alloc] init] autorelease];
+            [bookmarksDictionary setObject: indexes forKey: textView.document.fileURL.path];
+            [indexes addObject: [NSNumber numberWithUnsignedInteger: textView.document.fileContents.length]];
+        }
+
+        NSNumber *location = [NSNumber numberWithUnsignedInteger: textView.document.lastReadLocation];
+        if (![indexes containsObject: location]) {
+            [indexes addObject: location];
+            [defaults setObject: bookmarksDictionary forKey: @"bookmarks"];
+            [bookmarksMenu addItemWithTitle: [textView.document.displayName stringByAppendingFormat: @": %d%%",
+                                              roundtol(textView.document.lastReadLocation * 100.0 / textView.document.fileContents.length)]
+                                     action: @selector(gotoBookmark:)
+                              keyEquivalent: @""];
+        }
+    }
 }
 
 @end

@@ -22,6 +22,8 @@ typedef struct LineData {
     NSSize textInset;
     vector<JJLineData> textLines;
     TTDocument *document;
+    CGFloat lineHeight;
+    IBOutlet NSTextField *statusField;
 }
 
 @property (assign) NSSize textInset;

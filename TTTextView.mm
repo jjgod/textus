@@ -33,8 +33,10 @@
 {
     NSUInteger i, count = textLines.size();
 
-    for (i = 0; i < count; i++)
-        CFRelease(textLines[i].line);
+    for (i = 0; i < count; i++) {
+        if (textLines[i].line)
+            CFRelease(textLines[i].line);
+    }
 
     textLines.clear();
 }
@@ -109,6 +111,8 @@
                     // NSLog(@"%@", [document.fileContentsInPlainText substringWithRange: NSMakeRange(start, length)]);
                 }
             }
+            if (start + length < text.length && CFStringGetCharacterAtIndex(str, start + length) == '\n')
+                length += 1;
         } else {
             // Otherwise we can't do optical punctuation, do justified line instead
             if (width / maxWidth > 0.85) {
@@ -122,8 +126,10 @@
         frameRect.origin.y += lineHeight;
 
         // Add extra line here as paragraph spacing
-        if (CFStringGetCharacterAtIndex(str, start + length) == '\n')
+        if (CFStringGetCharacterAtIndex(str, start + length - 1) == '\n') {
+            // NSLog(@"%@", [document.fileContentsInPlainText substringWithRange: NSMakeRange(start, length)]);
             frameRect.origin.y += lineHeight;
+        }
     }
 
     CFRelease(typesetter);
@@ -164,7 +170,7 @@
     // NSLog(@"time used = %d msecs", msec);
 
     NSRect newFrame = [self frame];
-    newFrame.size.height = frameRect.origin.y + textInset.height;
+    newFrame.size.height = lineData.origin.y + textInset.height;
 
     [self setFrame: newFrame];
     [self setNeedsDisplay: YES];

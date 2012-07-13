@@ -84,7 +84,7 @@ NSString *encodeColor(NSColor *color)
             NSUInteger length = [[indexes objectAtIndex: 0] unsignedIntegerValue];
             for (NSUInteger i = 1; i < indexes.count; i++) {
                 NSUInteger location = [[indexes objectAtIndex: i] unsignedIntegerValue];
-                [bookmarksMenu addItemWithTitle: [name stringByAppendingFormat: @": %d%%",
+                [bookmarksMenu addItemWithTitle: [name stringByAppendingFormat: @": %ld%%",
                                                   roundtol(location * 100.0 / length)]
                                          action: @selector(gotoBookmark:)
                                   keyEquivalent: @""];
@@ -167,7 +167,7 @@ NSString *encodeColor(NSColor *color)
         if (![indexes containsObject: location]) {
             [indexes addObject: location];
             [defaults setObject: bookmarksDictionary forKey: @"bookmarks"];
-            [bookmarksMenu addItemWithTitle: [textView.document.displayName stringByAppendingFormat: @": %d%%",
+            [bookmarksMenu addItemWithTitle: [textView.document.displayName stringByAppendingFormat: @": %ld%%",
                                               roundtol(textView.document.lastReadLocation * 100.0 / textView.document.fileContents.length)]
                                      action: @selector(gotoBookmark:)
                               keyEquivalent: @""];

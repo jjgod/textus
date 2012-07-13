@@ -8,11 +8,11 @@
 
 #import "TTTextView.h"
 #import "TTDocument.h"
-#import <time.h>
+#include <sys/time.h>
 
-#define kMaxLinesPerFrame 256
-
-#define MAX_LINES(total)    (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
+#define kMaxLinesPerFrame     256
+#define MAX_LINES(total)      (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
+#define JJ_CUSTOM_FRAMESETTER 1
 
 @implementation TTTextView
 
@@ -57,24 +57,83 @@
                                          atIndex: 0
                                   effectiveRange: NULL];
     lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
-    CGFloat lineAscent = CTFontGetAscent(font);
     lineHeight *= [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
+    CGFloat lineAscent = CTFontGetAscent(font);
 
-    // Create the framesetter with the attributed string.
-    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) text);
-
-    CFRange fullRange = CFRangeMake(0, text.length);
     CGFloat scrollerWidth = [NSScroller isCompatibleWithOverlayScrollers] ? 0 : [NSScroller scrollerWidth];
     CGRect frameRect = CGRectMake(textInset.width, textInset.height,
                                   contentSize.width - 2 * textInset.width - scrollerWidth,
                                   contentSize.height - textInset.height);
 
-    CFRange range, frameRange;
     JJLineData lineData = { NULL, CGPointMake(0, 0) };
 
     [self removeAllLines];
+
+    struct timeval tv1, tv2;
+    gettimeofday(&tv1, 0);
+#ifdef JJ_CUSTOM_FRAMESETTER
+    CGFloat fontSize = CTFontGetSize(font);
+    CFStringRef str = (CFStringRef) document.fileContentsInPlainText;
+    CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString((CFAttributedStringRef) text);
+    CFIndex start, length = 0;
+    maxWidth = floor(frameRect.size.width / fontSize) * fontSize;
+    lineData.origin = frameRect.origin;
+
+    for (start = 0; start < text.length; start += length) {
+        length = CTTypesetterSuggestLineBreak(typesetter, start, frameRect.size.width);
+        if (length == 1 && CFStringGetCharacterAtIndex(str, start) == '\n')
+            continue;
+        lineData.line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, length));
+        CGFloat ascent, descent, leading;
+        double width = CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
+
+        CFIndex secondCharInNextLineIndex = start + length + 1;
+        if (width <= maxWidth - fontSize) {
+            if (secondCharInNextLineIndex < text.length) {
+                UniChar ch = CFStringGetCharacterAtIndex(str, secondCharInNextLineIndex);
+                if ((ch == 0xFF0C /* ， */ || ch == 0x3002 /* 。 */ ||
+                     ch == 0x3001 /* 、 */ || ch == 0xFF01 /* ！ */ ||
+                     ch == 0xFF1A /* ： */ || ch == 0xFF1B /* ； */ ||
+                     ch == 0x201D /* ” */)) {
+                    CFRelease(lineData.line);
+                    length += 2;
+
+                    // For situations like "，”" or "。」", we need to extend the length one more char
+                    // to include the quote
+                    if (secondCharInNextLineIndex + 1 < text.length) {
+                        ch = CFStringGetCharacterAtIndex(str, secondCharInNextLineIndex + 1);
+                        if (ch == 0x201D /* ” */ || ch == 0x300D /* 」 */)
+                        length += 1;
+                    }
+                    lineData.line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, length));
+                    // NSLog(@"%@", [document.fileContentsInPlainText substringWithRange: NSMakeRange(start, length)]);
+                }
+            }
+        } else {
+            // Otherwise we can't do optical punctuation, do justified line instead
+            if (width / maxWidth > 0.85) {
+                CTLineRef justifiedLine = CTLineCreateJustifiedLine(lineData.line, 1.0, maxWidth);
+                CFRelease(lineData.line);
+                lineData.line = justifiedLine;
+            }
+        }
+        lineData.origin.y = frameRect.origin.y + lineAscent;
+        textLines.push_back(lineData);
+        frameRect.origin.y += lineHeight;
+
+        // Add extra line here as paragraph spacing
+        if (CFStringGetCharacterAtIndex(str, start + length) == '\n')
+            frameRect.origin.y += lineHeight;
+    }
+
+    CFRelease(typesetter);
+#else
+    // Create the framesetter with the attributed string.
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef) text);
+    CFRange range, frameRange;
+
     for (range = frameRange = CFRangeMake(0, 0);
-         range.location < fullRange.length;
+         range.location < text.length;
          range.location += frameRange.length)
     {
         CGMutablePathRef path = CGPathCreateMutable();
@@ -99,6 +158,10 @@
     }
 
     CFRelease(framesetter);
+#endif
+    gettimeofday(&tv2, 0);
+    int msec = (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000;
+    // NSLog(@"time used = %d msecs", msec);
 
     NSRect newFrame = [self frame];
     newFrame.size.height = frameRect.origin.y + textInset.height;
@@ -133,6 +196,8 @@
     NSUInteger i, from, total = textLines.size();
     JJLineData lineData = { NULL, CGPointZero };
     CGFloat bottom = rect.origin.y + rect.size.height;
+
+    // NSRectFill(NSMakeRect(textInset.width + maxWidth, rect.origin.y, 1.5, rect.size.height));
 
     from = [self lineBefore: rect.origin.y];
     NSUInteger firstLineInView = [self lineBefore: [[self enclosingScrollView] documentVisibleRect].origin.y] + 1;

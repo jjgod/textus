@@ -147,11 +147,10 @@ NSStringEncoding detectedEncodingForData(NSData *data)
     if (fileContents)
         [fileContents release];
 
-    [self setFileContentsInPlainText: contents];
+    [self setFileContentsInPlainText: [contents stringByReplacingOccurrencesOfString: @"\r"
+                                                                          withString: @""]];
     // Remove DOS line endings
-    fileContents = [[NSMutableAttributedString alloc] initWithString:
-                            [contents stringByReplacingOccurrencesOfString: @"\r"
-                                                                withString: @""]
+    fileContents = [[NSMutableAttributedString alloc] initWithString: self.fileContentsInPlainText
                                                           attributes: [self attributesForText]];
     [contents release];
 

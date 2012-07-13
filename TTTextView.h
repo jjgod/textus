@@ -23,6 +23,7 @@ typedef struct LineData {
     vector<JJLineData> textLines;
     TTDocument *document;
     CGFloat lineHeight;
+    CGFloat maxWidth;
     IBOutlet NSTextField *statusField;
 }
 

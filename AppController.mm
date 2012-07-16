@@ -76,21 +76,6 @@ NSString *encodeColor(NSColor *color)
     bookmarksDictionary = [[defaults dictionaryForKey: @"bookmarks"] mutableCopy];
     if (!bookmarksDictionary)
         bookmarksDictionary = [[NSMutableDictionary alloc] init];
-
-    for (NSString *path in [bookmarksDictionary allKeys]) {
-        NSString *name = [[path lastPathComponent] stringByDeletingPathExtension];
-        NSArray *indexes = [bookmarksDictionary objectForKey: path];
-        if (indexes.count > 1) {
-            NSUInteger length = [[indexes objectAtIndex: 0] unsignedIntegerValue];
-            for (NSUInteger i = 1; i < indexes.count; i++) {
-                NSUInteger location = [[indexes objectAtIndex: i] unsignedIntegerValue];
-                [bookmarksMenu addItemWithTitle: [name stringByAppendingFormat: @": %ld%%",
-                                                  roundtol(location * 100.0 / length)]
-                                         action: @selector(gotoBookmark:)
-                                  keyEquivalent: @""];
-            }
-        }
-    }
 }
 
 - (NSFont *) font
@@ -145,6 +130,19 @@ NSString *encodeColor(NSColor *color)
         [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
 }
 
+- (BOOL) validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
+{
+    SEL theAction = [anItem action];
+
+    if (theAction == @selector(addBookmark:))
+    {
+        if ([NSApp keyWindow])
+            return YES;
+        return NO;
+    }
+    return YES;
+}
+
 - (IBAction) gotoBookmark:(id)sender
 {
 
@@ -167,12 +165,14 @@ NSString *encodeColor(NSColor *color)
         if (![indexes containsObject: location]) {
             [indexes addObject: location];
             [defaults setObject: bookmarksDictionary forKey: @"bookmarks"];
-            [bookmarksMenu addItemWithTitle: [textView.document.displayName stringByAppendingFormat: @": %ld%%",
-                                              roundtol(textView.document.lastReadLocation * 100.0 / textView.document.fileContents.length)]
-                                     action: @selector(gotoBookmark:)
-                              keyEquivalent: @""];
         }
     }
+}
+
+- (void) dealloc
+{
+    [super dealloc];
+    [bookmarksDictionary release];
 }
 
 @end

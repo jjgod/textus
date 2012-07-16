@@ -10,6 +10,7 @@
 		0728CDEC102817BC0060E2F2 /* Textus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0728CDEB102817BC0060E2F2 /* Textus.icns */; };
 		074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 074880B510636E6900C91C75 /* ExtendedAttributes.m */; };
 		0759B50A12D66C7C00EDB373 /* chardetect.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0759B50912D66C7C00EDB373 /* chardetect.a */; };
+		0794CF9715B45DF300498FAA /* TTProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0794CF9615B45DF300498FAA /* TTProgressView.m */; };
 		07AF47CE0F6E3EFA00558BF4 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AF47CD0F6E3EFA00558BF4 /* AppController.mm */; };
 		07AF48FD0F6E5D6900558BF4 /* TTTextView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AF48FC0F6E5D6900558BF4 /* TTTextView.mm */; };
 		1DDD582C0DA1D0D100B32029 /* TTDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* TTDocument.xib */; };
@@ -26,6 +27,8 @@
 		074880B410636E6900C91C75 /* ExtendedAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendedAttributes.h; sourceTree = "<group>"; };
 		074880B510636E6900C91C75 /* ExtendedAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendedAttributes.m; sourceTree = "<group>"; };
 		0759B50912D66C7C00EDB373 /* chardetect.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = chardetect.a; sourceTree = "<group>"; };
+		0794CF9515B45DF300498FAA /* TTProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTProgressView.h; sourceTree = "<group>"; };
+		0794CF9615B45DF300498FAA /* TTProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTProgressView.m; sourceTree = "<group>"; };
 		07AF47CC0F6E3EFA00558BF4 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		07AF47CD0F6E3EFA00558BF4 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
 		07AF48FB0F6E5D6900558BF4 /* TTTextView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = TTTextView.h; sourceTree = "<group>"; };
@@ -109,6 +112,8 @@
 				07AF48FC0F6E5D6900558BF4 /* TTTextView.mm */,
 				074880B410636E6900C91C75 /* ExtendedAttributes.h */,
 				074880B510636E6900C91C75 /* ExtendedAttributes.m */,
+				0794CF9515B45DF300498FAA /* TTProgressView.h */,
+				0794CF9615B45DF300498FAA /* TTProgressView.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -217,6 +222,7 @@
 				07AF47CE0F6E3EFA00558BF4 /* AppController.mm in Sources */,
 				07AF48FD0F6E5D6900558BF4 /* TTTextView.mm in Sources */,
 				074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */,
+				0794CF9715B45DF300498FAA /* TTProgressView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

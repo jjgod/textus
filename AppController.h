@@ -9,7 +9,6 @@
 #import <Cocoa/Cocoa.h>
 
 @interface AppController : NSResponder {
-    IBOutlet NSMenu *bookmarksMenu;
     NSMutableDictionary *bookmarksDictionary;
 }
 

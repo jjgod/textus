@@ -49,7 +49,7 @@
 - (void) setUnsignedInteger: (NSUInteger) num forXattrKey: (NSString *) key
 {
     const char *path = [[self path] fileSystemRepresentation];
-    const char *buf = [[NSString stringWithFormat: @"%ld", num] UTF8String];
+    const char *buf = [[NSString stringWithFormat: @"%lu", num] UTF8String];
 
     setxattr(path, [key UTF8String], buf, strlen(buf), 0, 0);
 }

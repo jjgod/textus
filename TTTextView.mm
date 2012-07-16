@@ -106,7 +106,8 @@
                     // to include the quote
                     if (secondCharInNextLineIndex + 1 < text.length) {
                         ch = CFStringGetCharacterAtIndex(str, secondCharInNextLineIndex + 1);
-                        if (ch == 0x201D /* ” */ || ch == 0x300D /* 」 */)
+                        if (ch == 0x201D /* ” */ || ch == 0x300D /* 」 */ ||
+                            ch == 0xFF0C /* ， */ || ch == 0x3002 /* 。 */)
                         length += 1;
                     }
                     lineData.line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, length));
@@ -221,12 +222,15 @@
         CGContextSetTextPosition(context, lineData.origin.x, lineData.origin.y);
         CTLineDraw(lineData.line, context);
     }
-    
+
     long percentage = roundtol(i * 100 / total);
-    if (percentage)
+    if (percentage) {
+        statusField.integerValue = percentage;
         statusField.stringValue = [NSString stringWithFormat: @"%ld%%", percentage];
+    }
     else
         statusField.stringValue = @"";
+    [progressView setNeedsDisplay: YES];
 }
 
 - (void) scrollTo: (float) y

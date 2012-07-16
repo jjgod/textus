@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "TTProgressView.h"
 #import <vector>
 
 using namespace std;
@@ -25,6 +26,7 @@ typedef struct LineData {
     CGFloat lineHeight;
     CGFloat maxWidth;
     IBOutlet NSTextField *statusField;
+    IBOutlet TTProgressView *progressView;
 }
 
 @property (assign) NSSize textInset;

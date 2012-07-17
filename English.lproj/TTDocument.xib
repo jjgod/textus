@@ -111,7 +111,7 @@
 									<string key="NSFrame">{{1, 752}, {924, 15}}</string>
 									<reference key="NSSuperview" ref="707828383"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="591354529"/>
+									<reference key="NSNextKeyView" ref="214846958"/>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 									<int key="NSsFlags">1</int>
 									<reference key="NSTarget" ref="707828383"/>
@@ -134,7 +134,7 @@
 						<object class="NSTextField" id="1067187668">
 							<reference key="NSNextResponder" ref="568628114"/>
 							<int key="NSvFlags">289</int>
-							<string key="NSFrame">{{730, 1}, {63, 17}}</string>
+							<string key="NSFrame">{{759, 1}, {34, 17}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView"/>
@@ -157,7 +157,7 @@
 									<int key="NSColorSpace">6</int>
 									<string key="NSCatalogName">System</string>
 									<string key="NSColorName">controlTextColor</string>
-									<object class="NSColor" key="NSColor" id="942274167">
+									<object class="NSColor" key="NSColor" id="794668281">
 										<int key="NSColorSpace">3</int>
 										<bytes key="NSWhite">MAA</bytes>
 									</object>
@@ -165,7 +165,7 @@
 							</object>
 							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 						</object>
-						<object class="NSCustomView" id="591354529">
+						<object class="NSCustomView" id="214846958">
 							<reference key="NSNextResponder" ref="568628114"/>
 							<int key="NSvFlags">290</int>
 							<string key="NSFrame">{{0, 1}, {767, 17}}</string>
@@ -233,14 +233,14 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">progressView</string>
 						<reference key="source" ref="793227834"/>
-						<reference key="destination" ref="591354529"/>
+						<reference key="destination" ref="214846958"/>
 					</object>
 					<int key="connectionID">100049</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">statusField</string>
-						<reference key="source" ref="591354529"/>
+						<reference key="source" ref="214846958"/>
 						<reference key="destination" ref="1067187668"/>
 					</object>
 					<int key="connectionID">100048</int>
@@ -286,7 +286,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="707828383"/>
 							<reference ref="1067187668"/>
-							<reference ref="591354529"/>
+							<reference ref="214846958"/>
 						</object>
 						<reference key="parent" ref="275939982"/>
 					</object>
@@ -346,7 +346,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">100047</int>
-						<reference key="object" ref="591354529"/>
+						<reference key="object" ref="214846958"/>
 						<reference key="parent" ref="568628114"/>
 					</object>
 				</object>
@@ -388,7 +388,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<real value="0.0"/>
-					<reference ref="942274167"/>
+					<reference ref="794668281"/>
 					<real value="0.0"/>
 					<real value="0.0"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>

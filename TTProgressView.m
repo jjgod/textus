@@ -14,10 +14,33 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code here.
+        // TODO: figure out why 50 padding is needed here
+        CGFloat width = frame.size.width + 50;
+        NSTrackingArea *trackingArea = [[NSTrackingArea alloc] initWithRect: NSMakeRect(0, 0, width, frame.size.height)
+                                                                    options: (NSTrackingMouseEnteredAndExited | NSTrackingMouseMoved | NSTrackingActiveInKeyWindow )
+                                                                      owner: self
+                                                                   userInfo: nil];
+        [self addTrackingArea: trackingArea];
+        [trackingArea release];
     }
 
     return self;
+}
+
+- (void)mouseEntered:(NSEvent *)theEvent
+{
+    [[self window] setAcceptsMouseMovedEvents: YES];
+}
+
+- (void)mouseMoved:(NSEvent *)theEvent
+{
+    currentPoint = [self convertPoint: theEvent.locationInWindow fromView: nil];
+    [self setNeedsDisplay: YES];
+}
+
+- (void)mouseExited:(NSEvent *)theEvent
+{
+    [[self window] setAcceptsMouseMovedEvents: NO];
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -26,6 +49,7 @@
     [[NSColor darkGrayColor] setFill];
     CGFloat width = self.frame.size.width / 50;
     int i;
+    CGFloat r;
     int p = [statusField integerValue];
     bool unread = false;
     for (i = 1; i < 50; i++) {
@@ -33,8 +57,11 @@
             [[NSColor lightGrayColor] setFill];
             unread = true;
         }
+        r = 3;
+        if (ABS(currentPoint.x - i * width) < 5)
+            r = 6;
         // Create our circle path
-        NSRect rect = NSMakeRect(i * width, 7, 3, 3);
+        NSRect rect = NSMakeRect(i * width - r / 2, 8.5 - r / 2, r, r);
         NSBezierPath *circlePath = [NSBezierPath bezierPath];
         [circlePath appendBezierPathWithOvalInRect: rect];
         [circlePath fill];

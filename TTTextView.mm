@@ -86,8 +86,11 @@
 
     for (start = 0; start < text.length; start += length) {
         length = CTTypesetterSuggestLineBreak(typesetter, start, frameRect.size.width);
-        if (length == 1 && CFStringGetCharacterAtIndex(str, start) == '\n')
+
+        UniChar startChar = CFStringGetCharacterAtIndex(str, start);
+        if (length == 1 && startChar == '\n')
             continue;
+
         lineData.line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, length));
         CGFloat ascent, descent, leading;
         double width = CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);

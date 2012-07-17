@@ -12,3 +12,5 @@ TODO
 * Foreground/background colors
 * Bookmarks
 * Markdown
+* Fullscreen
+* Hightlight location in progress view

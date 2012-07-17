@@ -257,4 +257,9 @@ paragraph = nil; \
     }
 }
 
+- (NSSize)window:(NSWindow *)window willUseFullScreenContentSize:(NSSize)proposedSize
+{
+    return NSMakeSize(textView.frame.size.width, proposedSize.height);
+}
+
 @end

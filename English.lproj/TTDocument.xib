@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
-		<int key="IBDocument.SystemTarget">1050</int>
+		<int key="IBDocument.SystemTarget">1070</int>
 		<string key="IBDocument.SystemVersion">12A269</string>
 		<string key="IBDocument.InterfaceBuilderVersion">2549</string>
 		<string key="IBDocument.AppKitVersion">1187</string>
@@ -111,7 +111,7 @@
 									<string key="NSFrame">{{1, 752}, {924, 15}}</string>
 									<reference key="NSSuperview" ref="707828383"/>
 									<reference key="NSWindow"/>
-									<reference key="NSNextKeyView" ref="1064260259"/>
+									<reference key="NSNextKeyView" ref="591354529"/>
 									<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 									<int key="NSsFlags">1</int>
 									<reference key="NSTarget" ref="707828383"/>
@@ -137,6 +137,7 @@
 							<string key="NSFrame">{{730, 1}, {63, 17}}</string>
 							<reference key="NSSuperview" ref="568628114"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<string key="NSReuseIdentifierKey">_NS:3944</string>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="164454666">
@@ -156,7 +157,7 @@
 									<int key="NSColorSpace">6</int>
 									<string key="NSCatalogName">System</string>
 									<string key="NSColorName">controlTextColor</string>
-									<object class="NSColor" key="NSColor" id="212755098">
+									<object class="NSColor" key="NSColor" id="942274167">
 										<int key="NSColorSpace">3</int>
 										<bytes key="NSWhite">MAA</bytes>
 									</object>
@@ -164,7 +165,7 @@
 							</object>
 							<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
 						</object>
-						<object class="NSCustomView" id="1064260259">
+						<object class="NSCustomView" id="591354529">
 							<reference key="NSNextResponder" ref="568628114"/>
 							<int key="NSvFlags">290</int>
 							<string key="NSFrame">{{0, 1}, {767, 17}}</string>
@@ -183,6 +184,7 @@
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
 				<string key="NSMinSize">{94, 108}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
+				<int key="NSWindowCollectionBehavior">128</int>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
 			<object class="NSCustomObject" id="796877042">
@@ -231,14 +233,14 @@
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">progressView</string>
 						<reference key="source" ref="793227834"/>
-						<reference key="destination" ref="1064260259"/>
+						<reference key="destination" ref="591354529"/>
 					</object>
 					<int key="connectionID">100049</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">statusField</string>
-						<reference key="source" ref="1064260259"/>
+						<reference key="source" ref="591354529"/>
 						<reference key="destination" ref="1067187668"/>
 					</object>
 					<int key="connectionID">100048</int>
@@ -284,7 +286,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="707828383"/>
 							<reference ref="1067187668"/>
-							<reference ref="1064260259"/>
+							<reference ref="591354529"/>
 						</object>
 						<reference key="parent" ref="275939982"/>
 					</object>
@@ -344,7 +346,7 @@
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">100047</int>
-						<reference key="object" ref="1064260259"/>
+						<reference key="object" ref="591354529"/>
 						<reference key="parent" ref="568628114"/>
 					</object>
 				</object>
@@ -386,7 +388,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<real value="0.0"/>
-					<reference ref="212755098"/>
+					<reference ref="942274167"/>
 					<real value="0.0"/>
 					<real value="0.0"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -562,7 +564,7 @@
 		<string key="IBDocument.TargetRuntimeIdentifier">IBCocoaFramework</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.macosx</string>
-			<integer value="1050" key="NS.object.0"/>
+			<real value="1070" key="NS.object.0"/>
 		</object>
 		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDevelopmentDependencies">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin.InterfaceBuilder3</string>

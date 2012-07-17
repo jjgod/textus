@@ -51,7 +51,7 @@
 {
     NSAttributedString *text = [document fileContents];
 
-    if (! text)
+    if (! text || ![text length])
         return;
 
     NSSize contentSize = [[self enclosingScrollView] contentSize];
@@ -232,14 +232,16 @@
         CTLineDraw(lineData.line, context);
     }
 
-    long percentage = roundtol(i * 100 / total);
-    if (percentage) {
-        statusField.integerValue = percentage;
-        statusField.stringValue = [NSString stringWithFormat: @"%ld%%", percentage];
+    if (total > 0) {
+        long percentage = roundtol(i * 100 / total);
+        if (percentage) {
+            statusField.integerValue = percentage;
+            statusField.stringValue = [NSString stringWithFormat: @"%ld%%", percentage];
+        }
+        else
+            statusField.stringValue = @"";
+        [progressView setNeedsDisplay: YES];
     }
-    else
-        statusField.stringValue = @"";
-    [progressView setNeedsDisplay: YES];
 }
 
 - (void) scrollTo: (float) y

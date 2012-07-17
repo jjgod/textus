@@ -11,6 +11,10 @@
 		074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 074880B510636E6900C91C75 /* ExtendedAttributes.m */; };
 		0759B50A12D66C7C00EDB373 /* chardetect.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0759B50912D66C7C00EDB373 /* chardetect.a */; };
 		0794CF9715B45DF300498FAA /* TTProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0794CF9615B45DF300498FAA /* TTProgressView.m */; };
+		0794CFA615B5ABF100498FAA /* array.c in Sources */ = {isa = PBXBuildFile; fileRef = 0794CF9E15B5ABF100498FAA /* array.c */; };
+		0794CFA715B5ABF100498FAA /* buffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0794CFA015B5ABF100498FAA /* buffer.c */; };
+		0794CFA815B5ABF100498FAA /* markdown.c in Sources */ = {isa = PBXBuildFile; fileRef = 0794CFA215B5ABF100498FAA /* markdown.c */; };
+		0794CFA915B5ABF100498FAA /* renderers.c in Sources */ = {isa = PBXBuildFile; fileRef = 0794CFA415B5ABF100498FAA /* renderers.c */; };
 		07AF47CE0F6E3EFA00558BF4 /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AF47CD0F6E3EFA00558BF4 /* AppController.mm */; };
 		07AF48FD0F6E5D6900558BF4 /* TTTextView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07AF48FC0F6E5D6900558BF4 /* TTTextView.mm */; };
 		1DDD582C0DA1D0D100B32029 /* TTDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1DDD58280DA1D0D100B32029 /* TTDocument.xib */; };
@@ -29,6 +33,14 @@
 		0759B50912D66C7C00EDB373 /* chardetect.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = chardetect.a; sourceTree = "<group>"; };
 		0794CF9515B45DF300498FAA /* TTProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TTProgressView.h; sourceTree = "<group>"; };
 		0794CF9615B45DF300498FAA /* TTProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TTProgressView.m; sourceTree = "<group>"; };
+		0794CF9E15B5ABF100498FAA /* array.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = array.c; path = libsoldout/array.c; sourceTree = "<group>"; };
+		0794CF9F15B5ABF100498FAA /* array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = array.h; path = libsoldout/array.h; sourceTree = "<group>"; };
+		0794CFA015B5ABF100498FAA /* buffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = buffer.c; path = libsoldout/buffer.c; sourceTree = "<group>"; };
+		0794CFA115B5ABF100498FAA /* buffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = buffer.h; path = libsoldout/buffer.h; sourceTree = "<group>"; };
+		0794CFA215B5ABF100498FAA /* markdown.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = markdown.c; path = libsoldout/markdown.c; sourceTree = "<group>"; };
+		0794CFA315B5ABF100498FAA /* markdown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = markdown.h; path = libsoldout/markdown.h; sourceTree = "<group>"; };
+		0794CFA415B5ABF100498FAA /* renderers.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = renderers.c; path = libsoldout/renderers.c; sourceTree = "<group>"; };
+		0794CFA515B5ABF100498FAA /* renderers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = renderers.h; path = libsoldout/renderers.h; sourceTree = "<group>"; };
 		07AF47CC0F6E3EFA00558BF4 /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		07AF47CD0F6E3EFA00558BF4 /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
 		07AF48FB0F6E5D6900558BF4 /* TTTextView.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = TTTextView.h; sourceTree = "<group>"; };
@@ -121,6 +133,14 @@
 		2A37F4AFFDCFA73011CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				0794CF9E15B5ABF100498FAA /* array.c */,
+				0794CF9F15B5ABF100498FAA /* array.h */,
+				0794CFA015B5ABF100498FAA /* buffer.c */,
+				0794CFA115B5ABF100498FAA /* buffer.h */,
+				0794CFA215B5ABF100498FAA /* markdown.c */,
+				0794CFA315B5ABF100498FAA /* markdown.h */,
+				0794CFA415B5ABF100498FAA /* renderers.c */,
+				0794CFA515B5ABF100498FAA /* renderers.h */,
 				32DBCF750370BD2300C91783 /* Textus_Prefix.pch */,
 				2A37F4B0FDCFA73011CA2CEA /* main.m */,
 			);
@@ -223,6 +243,10 @@
 				07AF48FD0F6E5D6900558BF4 /* TTTextView.mm in Sources */,
 				074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */,
 				0794CF9715B45DF300498FAA /* TTProgressView.m in Sources */,
+				0794CFA615B5ABF100498FAA /* array.c in Sources */,
+				0794CFA715B5ABF100498FAA /* buffer.c in Sources */,
+				0794CFA815B5ABF100498FAA /* markdown.c in Sources */,
+				0794CFA915B5ABF100498FAA /* renderers.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

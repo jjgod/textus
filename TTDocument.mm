@@ -11,9 +11,22 @@
 #import "chardetect.h"
 #import "TTTextView.h"
 
-#define kLastReadLocationKey    @"org.jjgod.textus.lastReadLocation"
+extern "C" {
+#import "libsoldout/markdown.h"
+}
 
-#define BUFSIZE	4096
+#define kLastReadLocationKey    @"org.jjgod.textus.lastReadLocation"
+#define BUFSIZE                 4096
+
+
+struct tt_format_data {
+    NSMutableAttributedString *str;
+    CTFontRef normalFont;
+    CTFontRef h1Font;
+    CTFontRef h2Font;
+    CTFontRef h3Font;
+    CTFontRef h4Font;
+};
 
 /* Use universal charset detector to automatically determine which encoding
  * we should use to open the URL */
@@ -117,9 +130,9 @@ NSStringEncoding detectedEncodingForData(NSData *data)
                   error: (NSError **) outError
 {
     if (outError != NULL) {
-		*outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:unimpErr userInfo:NULL];
-	}
-	return nil;
+        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:unimpErr userInfo:NULL];
+    }
+    return nil;
 }
 
 - (NSDictionary *) attributesForText
@@ -206,6 +219,118 @@ paragraph = nil; \
     }
 }
 
+#define TT_APPEND(attrStr, rawStr, ftu) { \
+    NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr \
+                                                                   attributes: [NSDictionary dictionaryWithObject: (id) ftu \
+                                                                                                           forKey: (id) kCTFontAttributeName]]; \
+    [str appendAttributedString: toAppend]; \
+    [toAppend release]; \
+}
+
+#define TT_APPEND_TEXT(attrStr, textData, textSize, fontToUse) { \
+    NSString *rawStr = [[NSString alloc] initWithBytesNoCopy: textData \
+                                                      length: textSize \
+                                                    encoding: NSUTF8StringEncoding \
+                                                freeWhenDone: NO]; \
+    TT_APPEND(attrStr, rawStr, fontToUse); \
+    [rawStr release]; \
+}
+
+static void tt_header(struct buf *ob, struct buf *text, int level, void *opaque)
+{
+    struct tt_format_data *data = (struct tt_format_data *) opaque;
+    NSMutableAttributedString *str = data->str;
+    CTFontRef font = NULL;
+    switch(level) {
+        case 1:
+            if (!data->h1Font)
+                data->h1Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 8,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h1Font;
+            break;
+        case 2:
+            if (!data->h2Font)
+                data->h2Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 6,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h2Font;
+            break;
+        case 3:
+            if (!data->h3Font)
+                data->h3Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 4,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h3Font;
+            break;
+        case 4:
+            if (!data->h4Font)
+                data->h4Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 2,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h4Font;
+            break;
+    }
+    if (text && font) {
+        TT_APPEND_TEXT(str, text->data, text->size, font);
+    }
+    TT_APPEND(str, @"\n", data->normalFont);
+}
+
+static void tt_paragraph(struct buf *ob, struct buf *text, void *opaque)
+{
+    struct tt_format_data *data = (struct tt_format_data *) opaque;
+    NSMutableAttributedString *str = data->str;
+    if (ob->size) {
+        TT_APPEND(str, @"\n", data->normalFont);
+    }
+
+    if (text)
+        TT_APPEND_TEXT(str, text->data, text->size, data->normalFont);
+
+    TT_APPEND(str, @"\n", data->normalFont);
+}
+
+/* renderer structure */
+struct mkd_renderer to_textus = {
+    /* document-level callbacks */
+    NULL,
+    NULL,
+
+    /* block-level callbacks */
+    NULL,
+    NULL,
+    NULL,
+    tt_header,
+    NULL,
+    NULL,
+    NULL,
+    tt_paragraph,
+    NULL,
+    NULL,
+    NULL,
+
+    /* span-level callbacks */
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
+    /* low-level callbacks */
+    NULL,
+    NULL,
+
+    /* renderer data */
+    64,
+    "*_",
+    NULL
+};
+
 - (BOOL) readFromURL: (NSURL *) absoluteURL
               ofType: (NSString *) typeName
                error: (NSError **) outError
@@ -224,12 +349,25 @@ paragraph = nil; \
     NSMutableString *wrappedText = [[NSMutableString alloc] init];
     [self outputTo: wrappedText from: [contents stringByReplacingOccurrencesOfString: @"\r"
                                                                           withString: @""]];
-    [self setFileContentsInPlainText: wrappedText];
-    [wrappedText release];
-    // Remove DOS line endings
-    fileContents = [[NSMutableAttributedString alloc] initWithString: self.fileContentsInPlainText
-                                                          attributes: [self attributesForText]];
     [contents release];
+    struct buf *ib, *ob;
+    ib = bufnew(wrappedText.length);
+    bufgrow(ib, wrappedText.length);
+    bufputs(ib, [wrappedText UTF8String]);
+    [wrappedText release];
+
+    NSDictionary *attributes = [self attributesForText];
+    struct tt_format_data formatData;
+    fileContents = [[NSMutableAttributedString alloc] init];
+    formatData.str = fileContents;
+    formatData.normalFont = (CTFontRef) [attributes objectForKey: (id) kCTFontAttributeName];
+    formatData.h1Font = formatData.h2Font = formatData.h3Font = NULL;
+
+    ob = bufnew(64);
+    to_textus.opaque = &formatData;
+    markdown(ob, ib, &to_textus);
+
+    [self setFileContentsInPlainText: [fileContents mutableString]];
 
     NSArray *keys = [absoluteURL allXattrKeys];
     if ([keys containsObject: kLastReadLocationKey])

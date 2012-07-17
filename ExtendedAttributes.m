@@ -86,7 +86,8 @@
     NSData *data = [str dataUsingEncoding: NSUTF8StringEncoding];
 
     if (!data)
-        [NSException raise: NSCharacterConversionException format: @"Couldn't convert string to UTF8 for xattr storage."];
+        [NSException raise: NSCharacterConversionException
+                    format: @"Couldn't convert string to UTF8 for xattr storage."];
 
     [self setData: data forXattrKey: key];
 }

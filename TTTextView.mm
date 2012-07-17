@@ -3,7 +3,6 @@
 //  Textus
 //
 //  Created by Jjgod Jiang on 3/16/09.
-//  Copyright 2009 Jjgod Jiang. All rights reserved.
 //
 
 #import "TTTextView.h"
@@ -13,6 +12,7 @@
 #define kMaxLinesPerFrame     256
 #define MAX_LINES(total)      (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
 #define JJ_CUSTOM_FRAMESETTER 1
+// #define TT_LAYOUT_TIMING      1
 
 @implementation TTTextView
 
@@ -71,8 +71,11 @@
 
     [self removeAllLines];
 
+#ifdef TT_LAYOUT_TIMING
     struct timeval tv1, tv2;
     gettimeofday(&tv1, 0);
+#endif
+
 #ifdef JJ_CUSTOM_FRAMESETTER
     CGFloat fontSize = CTFontGetSize(font);
     CFStringRef str = (CFStringRef) document.fileContentsInPlainText;
@@ -94,11 +97,11 @@
             if (secondCharInNextLineIndex < text.length) {
                 UniChar ch = CFStringGetCharacterAtIndex(str, secondCharInNextLineIndex);
                 // TODO: handle ⋯⋯” at the beginning of next line
-                if ((ch == 0xFF0C /* ， */ || ch == 0x3002 /* 。 */ ||
-                     ch == 0x3001 /* 、 */ || ch == 0xFF01 /* ！ */ ||
-                     ch == 0xFF1A /* ： */ || ch == 0xFF1B /* ； */ ||
-                     ch == 0x201D /* ” */) || ch == 0x201C /* “ */ ||
-                     ch == 0x300C /* 「 */ || ch == 0xFF1F /* ？ */) {
+                if (ch == 0xFF0C /* ， */ || ch == 0x3002 /* 。 */ ||
+                    ch == 0x3001 /* 、 */ || ch == 0xFF01 /* ！ */ ||
+                    ch == 0xFF1A /* ： */ || ch == 0xFF1B /* ； */ ||
+                    ch == 0x201D /* ” */  || ch == 0x201C /* “ */ ||
+                    ch == 0x300C /* 「 */ || ch == 0xFF1F /* ？ */) {
                     CFRelease(lineData.line);
                     length += (ch == 0x201C || ch == 0x300C) ? 1 : 2;
 
@@ -168,9 +171,12 @@
 
     CFRelease(framesetter);
 #endif
+
+#ifdef TT_LAYOUT_TIMING
     gettimeofday(&tv2, 0);
     int msec = (tv2.tv_sec - tv1.tv_sec) * 1000 + (tv2.tv_usec - tv1.tv_usec) / 1000;
-    // NSLog(@"time used = %d msecs", msec);
+    NSLog(@"time used = %d msecs", msec);
+#endif
 
     NSRect newFrame = [self frame];
     newFrame.size.height = lineData.origin.y + textInset.height;

@@ -3,13 +3,13 @@
 //  Textus
 //
 //  Created by Jjgod Jiang on 2/16/09.
-//  Copyright Jjgod Jiang 2009-2010. All rights reserved.
 //
 
 #import "AppController.h"
 #import "TTDocument.h"
 #import "ExtendedAttributes.h"
 #import "chardetect.h"
+#import "TTTextView.h"
 
 #define kLastReadLocationKey    @"org.jjgod.textus.lastReadLocation"
 

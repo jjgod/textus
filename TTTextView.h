@@ -21,7 +21,7 @@ typedef struct LineData {
 @interface TTTextView : NSView {
     NSSize textInset;
     vector<JJLineData> textLines;
-    TTDocument *document;
+    TTDocument *__weak document;
     CGFloat lineHeight;
     CGFloat maxWidth;
     IBOutlet NSTextField *statusField;
@@ -29,7 +29,7 @@ typedef struct LineData {
 }
 
 @property (assign) NSSize textInset;
-@property (assign) TTDocument *document;
+@property (weak) TTDocument *document;
 
 - (void) invalidateLayout;
 - (void) scrollToLocation: (NSUInteger) location;

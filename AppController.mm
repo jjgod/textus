@@ -155,7 +155,7 @@ NSString *encodeColor(NSColor *color)
 
         NSMutableArray *indexes = [bookmarksDictionary objectForKey: textView.document.fileURL.path];
         if (!indexes) {
-            indexes = [[[NSMutableArray alloc] init] autorelease];
+            indexes = [[NSMutableArray alloc] init];
             [bookmarksDictionary setObject: indexes forKey: textView.document.fileURL.path];
             [indexes addObject: [NSNumber numberWithUnsignedInteger: textView.document.fileContents.length]];
         }
@@ -168,10 +168,5 @@ NSString *encodeColor(NSColor *color)
     }
 }
 
-- (void) dealloc
-{
-    [super dealloc];
-    [bookmarksDictionary release];
-}
 
 @end

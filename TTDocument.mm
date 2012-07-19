@@ -90,8 +90,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 
 - (void) dealloc
 {
-    [fileContents release];
-    fileContents = nil;
 
     NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -100,7 +98,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
         [defaults removeObserver: self
                       forKeyPath: keyPath];
 
-    [super dealloc];
 }
 
 - (void) saveMetaData
@@ -149,7 +146,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 #define outputLine(output, line)           [output appendFormat: @"%@\n", line]
 #define outputParagraph(output, paragraph) do { \
 [output appendFormat: @"%@\n\n", paragraph]; \
-[paragraph release]; \
 paragraph = nil; \
 } while (0)
 
@@ -221,10 +217,9 @@ paragraph = nil; \
 
 #define TT_APPEND(attrStr, rawStr, ftu) { \
     NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr \
-                                                                   attributes: [NSDictionary dictionaryWithObject: (id) ftu \
+                                                                   attributes: [NSDictionary dictionaryWithObject: (__bridge id) ftu \
                                                                                                            forKey: (id) kCTFontAttributeName]]; \
     [str appendAttributedString: toAppend]; \
-    [toAppend release]; \
 }
 
 #define TT_APPEND_TEXT(attrStr, textData, textSize, fontToUse) { \
@@ -233,7 +228,6 @@ paragraph = nil; \
                                                     encoding: NSUTF8StringEncoding \
                                                 freeWhenDone: NO]; \
     TT_APPEND(attrStr, rawStr, fontToUse); \
-    [rawStr release]; \
 }
 
 static void tt_header(struct buf *ob, struct buf *text, int level, void *opaque)
@@ -343,24 +337,20 @@ struct mkd_renderer to_textus = {
     if (! contents)
         return NO;
 
-    if (fileContents)
-        [fileContents release];
 
     NSMutableString *wrappedText = [[NSMutableString alloc] init];
     [self outputTo: wrappedText from: [contents stringByReplacingOccurrencesOfString: @"\r"
                                                                           withString: @""]];
-    [contents release];
     struct buf *ib, *ob;
     ib = bufnew(wrappedText.length);
     bufgrow(ib, wrappedText.length);
     bufputs(ib, [wrappedText UTF8String]);
-    [wrappedText release];
 
     NSDictionary *attributes = [self attributesForText];
     struct tt_format_data formatData;
     fileContents = [[NSMutableAttributedString alloc] init];
     formatData.str = fileContents;
-    formatData.normalFont = (CTFontRef) [attributes objectForKey: (id) kCTFontAttributeName];
+    formatData.normalFont = (__bridge CTFontRef) [attributes objectForKey: (id) kCTFontAttributeName];
     formatData.h1Font = formatData.h2Font = formatData.h3Font = NULL;
 
     ob = bufnew(64);

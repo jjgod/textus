@@ -17,8 +17,8 @@
     NSCharacterSet *linePrefixCharset;
 }
 
-@property (retain) NSMutableAttributedString *fileContents;
-@property (retain) NSString *fileContentsInPlainText;
+@property (strong) NSMutableAttributedString *fileContents;
+@property (strong) NSString *fileContentsInPlainText;
 @property (assign) NSUInteger lastReadLocation;
 
 - (NSDictionary *) attributesForText;

@@ -78,7 +78,7 @@
 - (NSString *) stringFromXattrKey: (NSString *) key
 {
     NSMutableData *data = [self dataForXattrKey: key];
-    return [[[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding] autorelease];
+    return [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 }
 
 - (void) setString: (NSString *) str forXattrKey: (NSString *) key

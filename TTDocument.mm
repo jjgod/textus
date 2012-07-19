@@ -12,7 +12,8 @@
 #import "TTTextView.h"
 
 extern "C" {
-#import "libsoldout/markdown.h"
+    #import "libsoldout/markdown.h"
+    #import "libsoldout/renderers.h"
 }
 
 #define kLastReadLocationKey    @"org.jjgod.textus.lastReadLocation"
@@ -26,6 +27,8 @@ struct tt_format_data {
     CTFontRef h2Font;
     CTFontRef h3Font;
     CTFontRef h4Font;
+    NSDictionary *blockQuoteAttributes;
+    NSUInteger indentLevel;
 };
 
 /* Use universal charset detector to automatically determine which encoding
@@ -136,7 +139,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSDictionary *attributes = @{(NSString *) kCTFontAttributeName: [NSFont fontWithName: [defaults stringForKey: @"fontName"]
-                                                size: [defaults doubleForKey: @"fontSize"]]};
+                                                                                    size: [defaults doubleForKey: @"fontSize"]]};
     return attributes;
 }
 
@@ -216,7 +219,7 @@ paragraph = nil; \
     NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr \
                                                                    attributes: [NSDictionary dictionaryWithObject: (__bridge id) ftu \
                                                                                                            forKey: (id) kCTFontAttributeName]]; \
-    [str appendAttributedString: toAppend]; \
+    [attrStr appendAttributedString: toAppend]; \
 }
 
 #define TT_APPEND_TEXT(attrStr, textData, textSize, fontToUse) { \
@@ -225,6 +228,34 @@ paragraph = nil; \
                                                     encoding: NSUTF8StringEncoding \
                                                 freeWhenDone: NO]; \
     TT_APPEND(attrStr, rawStr, fontToUse); \
+}
+
+static void tt_blockquote(struct buf *ob, struct buf *text, void *opaque)
+{
+    struct tt_format_data *data = (struct tt_format_data *) opaque;
+    NSMutableAttributedString *str = data->str;
+
+    if (text) {
+        NSString *rawStr = [[NSString alloc] initWithBytesNoCopy: text->data
+                                                          length: text->size
+                                                        encoding: NSUTF8StringEncoding
+                                                    freeWhenDone: NO];
+        CTFontRef font = data->normalFont;
+        if (! data->blockQuoteAttributes) {
+            CGFloat indent = CTFontGetSize(font) * 2;
+            CTParagraphStyleSetting settings[] = {
+                { kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(CGFloat), &indent },
+                { kCTParagraphStyleSpecifierHeadIndent,          sizeof(CGFloat), &indent },
+            };
+            CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(settings, 1);
+            data->blockQuoteAttributes = @{           (NSString *) kCTFontAttributeName: (__bridge id) font,
+                                            (NSString *) kCTParagraphStyleAttributeName: (__bridge id) paragraphStyle };
+            CFRelease(paragraphStyle);
+        }
+        NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr
+                                                                       attributes: data->blockQuoteAttributes];
+        [str appendAttributedString: toAppend];
+    }
 }
 
 static void tt_header(struct buf *ob, struct buf *text, int level, void *opaque)
@@ -290,7 +321,7 @@ struct mkd_renderer to_textus = {
 
     /* block-level callbacks */
     NULL,
-    NULL,
+    tt_blockquote,
     NULL,
     tt_header,
     NULL,
@@ -322,6 +353,29 @@ struct mkd_renderer to_textus = {
     NULL
 };
 
+- (void) formatDocument
+{
+    struct buf *ib, *ob;
+    ib = bufnew(self.rawfileContents.length);
+    bufgrow(ib, self.rawfileContents.length);
+    bufputs(ib, [self.rawfileContents UTF8String]);
+
+    NSDictionary *attributes = [self attributesForText];
+    struct tt_format_data formatData;
+    fileContents = [[NSMutableAttributedString alloc] init];
+    formatData.str = fileContents;
+    formatData.normalFont = (__bridge CTFontRef) attributes[(id) kCTFontAttributeName];
+    formatData.h1Font = formatData.h2Font = formatData.h3Font = formatData.h4Font = NULL;
+    formatData.blockQuoteAttributes = NULL;
+    formatData.indentLevel = 0;
+
+    ob = bufnew(64);
+    to_textus.opaque = &formatData;
+    markdown(ob, ib, &to_textus);
+
+    self.fileContentsInPlainText = [fileContents mutableString];
+}
+
 - (BOOL) readFromURL: (NSURL *) absoluteURL
               ofType: (NSString *) typeName
                error: (NSError **) outError
@@ -334,28 +388,11 @@ struct mkd_renderer to_textus = {
     if (! contents)
         return NO;
 
-
-    NSMutableString *wrappedText = [[NSMutableString alloc] init];
-    [self outputTo: wrappedText from: [contents stringByReplacingOccurrencesOfString: @"\r"
-                                                                          withString: @""]];
-    struct buf *ib, *ob;
-    ib = bufnew(wrappedText.length);
-    bufgrow(ib, wrappedText.length);
-    bufputs(ib, [wrappedText UTF8String]);
-
-    NSDictionary *attributes = [self attributesForText];
-    struct tt_format_data formatData;
-    fileContents = [[NSMutableAttributedString alloc] init];
-    formatData.str = fileContents;
-    formatData.normalFont = (__bridge CTFontRef) attributes[(id) kCTFontAttributeName];
-    formatData.h1Font = formatData.h2Font = formatData.h3Font = NULL;
-
-    ob = bufnew(64);
-    to_textus.opaque = &formatData;
-    markdown(ob, ib, &to_textus);
-
-    [self setFileContentsInPlainText: [fileContents mutableString]];
-
+    self.rawfileContents = [[NSMutableString alloc] init];
+    [self outputTo: self.rawfileContents
+              from: [contents stringByReplacingOccurrencesOfString: @"\r"
+                                                        withString: @""]];
+    [self formatDocument];
     NSArray *keys = [absoluteURL allXattrKeys];
     if ([keys containsObject: kLastReadLocationKey])
         lastReadLocation = [absoluteURL unsignedIntegerFromXattrKey: kLastReadLocationKey];
@@ -374,9 +411,7 @@ struct mkd_renderer to_textus = {
     {
         if (fileContents)
         {
-            [fileContents setAttributes: [self attributesForText]
-                                  range: NSMakeRange(0, fileContents.length)];
-
+            [self formatDocument];
             [textView invalidateLayout];
         }
     }

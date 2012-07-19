@@ -93,6 +93,17 @@
         lineData.line = CTTypesetterCreateLine(typesetter, CFRangeMake(start, length));
         CGFloat ascent, descent, leading;
         double width = CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
+        CTParagraphStyleRef paragraphStyle =
+            (__bridge CTParagraphStyleRef) [text attribute: (NSString *) kCTParagraphStyleAttributeName
+                                                   atIndex: start
+                                            effectiveRange: NULL];
+        if (paragraphStyle) {
+            CGFloat offset = 0;
+            bool hasIndent = CTParagraphStyleGetValueForSpecifier(paragraphStyle,
+                                                                  kCTParagraphStyleSpecifierHeadIndent, sizeof(CGFloat), &offset);
+            if (hasIndent)
+                lineData.origin.x += offset;
+        }
 
         CFIndex secondCharInNextLineIndex = start + length + 1;
         if (width <= maxWidth - fontSize) {
@@ -132,6 +143,7 @@
         lineData.origin.y = frameRect.origin.y + lineAscent;
         textLines.push_back(lineData);
         frameRect.origin.y += lineHeight;
+        lineData.origin.x = frameRect.origin.x;
 
         // Add extra line here as paragraph spacing
         if (CFStringGetCharacterAtIndex(str, start + length - 1) == '\n') {

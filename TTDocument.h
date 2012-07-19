@@ -13,17 +13,20 @@
     IBOutlet TTTextView *textView;
     NSMutableAttributedString *fileContents;
     NSString *fileContentsInPlainText;
+    NSMutableString *rawfileContents;
     NSUInteger lastReadLocation;
     NSCharacterSet *linePrefixCharset;
 }
 
 @property (strong) NSMutableAttributedString *fileContents;
 @property (strong) NSString *fileContentsInPlainText;
+@property (strong) NSMutableString *rawfileContents;
 @property (assign) NSUInteger lastReadLocation;
 
 - (NSDictionary *) attributesForText;
 - (void) saveMetaData;
 - (NSString *) firstLine: (NSString *) line;
 - (void) outputTo: (NSMutableString *) output from: (NSString *) contents;
+- (void) formatDocument;
 
 @end

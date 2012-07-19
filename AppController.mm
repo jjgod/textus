@@ -57,8 +57,8 @@ NSString *encodeColor(NSColor *color)
     [appDefaults setValue: @"#000000" forKey: @"foregroundColor"];
     [appDefaults setValue: @"#FFFFFF" forKey: @"backgroundColor"];
     [appDefaults setValue: @"STKaiti" forKey: @"fontName"];
-    [appDefaults setValue: [NSNumber numberWithDouble: 24.0] forKey: @"fontSize"];
-    [appDefaults setValue: [NSNumber numberWithDouble: 1.1] forKey: @"lineHeight"];
+    [appDefaults setValue: @24.0 forKey: @"fontSize"];
+    [appDefaults setValue: @1.1 forKey: @"lineHeight"];
     [appDefaults setValue: [NSMutableDictionary dictionaryWithCapacity: 20] forKey:@"bookmarks"];
 
 	[defaults registerDefaults: appDefaults];
@@ -126,7 +126,7 @@ NSString *encodeColor(NSColor *color)
         [defaults setValue: [newFont fontName] forKey: @"fontName"];
 
     if ([oldFont pointSize] != [newFont pointSize])
-        [defaults setValue: [NSNumber numberWithDouble: [newFont pointSize]] forKey: @"fontSize"];
+        [defaults setValue: @([newFont pointSize]) forKey: @"fontSize"];
 }
 
 - (BOOL) validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
@@ -150,17 +150,17 @@ NSString *encodeColor(NSColor *color)
 - (IBAction) addBookmark:(id)sender
 {
     if ([NSApp keyWindow]) {
-        TTTextView *textView = [[[[NSApp keyWindow].contentView subviews] objectAtIndex: 0] documentView];
+        TTTextView *textView = [[[NSApp keyWindow].contentView subviews][0] documentView];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
-        NSMutableArray *indexes = [bookmarksDictionary objectForKey: textView.document.fileURL.path];
+        NSMutableArray *indexes = bookmarksDictionary[textView.document.fileURL.path];
         if (!indexes) {
             indexes = [[NSMutableArray alloc] init];
-            [bookmarksDictionary setObject: indexes forKey: textView.document.fileURL.path];
-            [indexes addObject: [NSNumber numberWithUnsignedInteger: textView.document.fileContents.length]];
+            bookmarksDictionary[textView.document.fileURL.path] = indexes;
+            [indexes addObject: @(textView.document.fileContents.length)];
         }
 
-        NSNumber *location = [NSNumber numberWithUnsignedInteger: textView.document.lastReadLocation];
+        NSNumber *location = @(textView.document.lastReadLocation);
         if (![indexes containsObject: location]) {
             [indexes addObject: location];
             [defaults setObject: bookmarksDictionary forKey: @"bookmarks"];

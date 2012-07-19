@@ -71,7 +71,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 
         linePrefixCharset = [NSCharacterSet characterSetWithCharactersInString: @"　 "];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
+        NSArray *keyPaths = @[@"backgroundColor", @"lineHeight", @"fontName", @"fontSize"];
 
         for (NSString *keyPath in keyPaths)
             [defaults addObserver: self
@@ -91,7 +91,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 - (void) dealloc
 {
 
-    NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
+    NSArray *keyPaths = @[@"backgroundColor", @"lineHeight", @"fontName", @"fontSize"];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     for (NSString *keyPath in keyPaths)
@@ -135,11 +135,8 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 - (NSDictionary *) attributesForText
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSFont fontWithName: [defaults stringForKey: @"fontName"]
-                                                size: [defaults doubleForKey: @"fontSize"]],
-                                (NSString *) kCTFontAttributeName,
-                                nil];
+    NSDictionary *attributes = @{(NSString *) kCTFontAttributeName: [NSFont fontWithName: [defaults stringForKey: @"fontName"]
+                                                size: [defaults doubleForKey: @"fontSize"]]};
     return attributes;
 }
 
@@ -350,7 +347,7 @@ struct mkd_renderer to_textus = {
     struct tt_format_data formatData;
     fileContents = [[NSMutableAttributedString alloc] init];
     formatData.str = fileContents;
-    formatData.normalFont = (__bridge CTFontRef) [attributes objectForKey: (id) kCTFontAttributeName];
+    formatData.normalFont = (__bridge CTFontRef) attributes[(id) kCTFontAttributeName];
     formatData.h1Font = formatData.h2Font = formatData.h3Font = NULL;
 
     ob = bufnew(64);

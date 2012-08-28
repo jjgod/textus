@@ -11,14 +11,11 @@
 #import "chardetect.h"
 #import "TTTextView.h"
 
+#ifdef TT_MARKDOWN_SUPPORT
 extern "C" {
     #import "libsoldout/markdown.h"
     #import "libsoldout/renderers.h"
 }
-
-#define kLastReadLocationKey    @"org.jjgod.textus.lastReadLocation"
-#define BUFSIZE                 4096
-
 
 struct tt_format_data {
     NSMutableAttributedString *str;
@@ -30,6 +27,149 @@ struct tt_format_data {
     NSDictionary *blockQuoteAttributes;
     NSUInteger indentLevel;
 };
+
+#define TT_APPEND(attrStr, rawStr, ftu) { \
+    NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr \
+                                                                   attributes: [NSDictionary dictionaryWithObject: (__bridge id) ftu \
+                                                                                                           forKey: (id) kCTFontAttributeName]]; \
+    [attrStr appendAttributedString: toAppend]; \
+}
+
+#define TT_APPEND_TEXT(attrStr, textData, textSize, fontToUse) { \
+    NSString *rawStr = [[NSString alloc] initWithBytesNoCopy: textData \
+                                                      length: textSize \
+                                                    encoding: NSUTF8StringEncoding \
+                                                freeWhenDone: NO]; \
+    TT_APPEND(attrStr, rawStr, fontToUse); \
+}
+
+static void tt_blockquote(struct buf *ob, struct buf *text, void *opaque)
+{
+    struct tt_format_data *data = (struct tt_format_data *) opaque;
+    NSMutableAttributedString *str = data->str;
+
+    if (text) {
+        NSString *rawStr = [[NSString alloc] initWithBytesNoCopy: text->data
+                                                          length: text->size
+                                                        encoding: NSUTF8StringEncoding
+                                                    freeWhenDone: NO];
+        CTFontRef font = data->normalFont;
+        if (! data->blockQuoteAttributes) {
+            CGFloat indent = CTFontGetSize(font) * 2;
+            CTParagraphStyleSetting settings[] = {
+                { kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(CGFloat), &indent },
+                { kCTParagraphStyleSpecifierHeadIndent,          sizeof(CGFloat), &indent },
+            };
+            CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(settings, 1);
+            data->blockQuoteAttributes = @{           (NSString *) kCTFontAttributeName: (__bridge id) font,
+                                            (NSString *) kCTParagraphStyleAttributeName: (__bridge id) paragraphStyle };
+            CFRelease(paragraphStyle);
+        }
+        NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr
+                                                                       attributes: data->blockQuoteAttributes];
+        [str appendAttributedString: toAppend];
+    }
+}
+
+static void tt_header(struct buf *ob, struct buf *text, int level, void *opaque)
+{
+    struct tt_format_data *data = (struct tt_format_data *) opaque;
+    NSMutableAttributedString *str = data->str;
+    CTFontRef font = NULL;
+    switch(level) {
+        case 1:
+            if (!data->h1Font)
+                data->h1Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 8,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h1Font;
+            break;
+        case 2:
+            if (!data->h2Font)
+                data->h2Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 6,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h2Font;
+            break;
+        case 3:
+            if (!data->h3Font)
+                data->h3Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 4,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h3Font;
+            break;
+        case 4:
+            if (!data->h4Font)
+                data->h4Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
+                                                                  CTFontGetSize(data->normalFont) + 2,
+                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
+            font = data->h4Font;
+            break;
+    }
+    if (text && font) {
+        TT_APPEND_TEXT(str, text->data, text->size, font);
+    }
+    TT_APPEND(str, @"\n", data->normalFont);
+}
+
+static void tt_paragraph(struct buf *ob, struct buf *text, void *opaque)
+{
+    struct tt_format_data *data = (struct tt_format_data *) opaque;
+    NSMutableAttributedString *str = data->str;
+    if (ob->size) {
+        TT_APPEND(str, @"\n", data->normalFont);
+    }
+
+    if (text)
+        TT_APPEND_TEXT(str, text->data, text->size, data->normalFont);
+
+    TT_APPEND(str, @"\n", data->normalFont);
+}
+
+/* renderer structure */
+struct mkd_renderer to_textus = {
+    /* document-level callbacks */
+    NULL,
+    NULL,
+
+    /* block-level callbacks */
+    NULL,
+    tt_blockquote,
+    NULL,
+    tt_header,
+    NULL,
+    NULL,
+    NULL,
+    tt_paragraph,
+    NULL,
+    NULL,
+    NULL,
+
+    /* span-level callbacks */
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+
+    /* low-level callbacks */
+    NULL,
+    NULL,
+
+    /* renderer data */
+    64,
+    "*_",
+    NULL
+};
+#endif
+
+#define kLastReadLocationKey    @"org.jjgod.textus.lastReadLocation"
+#define BUFSIZE                 4096
+
 
 /* Use universal charset detector to automatically determine which encoding
  * we should use to open the URL */
@@ -215,146 +355,9 @@ paragraph = nil; \
     }
 }
 
-#define TT_APPEND(attrStr, rawStr, ftu) { \
-    NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr \
-                                                                   attributes: [NSDictionary dictionaryWithObject: (__bridge id) ftu \
-                                                                                                           forKey: (id) kCTFontAttributeName]]; \
-    [attrStr appendAttributedString: toAppend]; \
-}
-
-#define TT_APPEND_TEXT(attrStr, textData, textSize, fontToUse) { \
-    NSString *rawStr = [[NSString alloc] initWithBytesNoCopy: textData \
-                                                      length: textSize \
-                                                    encoding: NSUTF8StringEncoding \
-                                                freeWhenDone: NO]; \
-    TT_APPEND(attrStr, rawStr, fontToUse); \
-}
-
-static void tt_blockquote(struct buf *ob, struct buf *text, void *opaque)
-{
-    struct tt_format_data *data = (struct tt_format_data *) opaque;
-    NSMutableAttributedString *str = data->str;
-
-    if (text) {
-        NSString *rawStr = [[NSString alloc] initWithBytesNoCopy: text->data
-                                                          length: text->size
-                                                        encoding: NSUTF8StringEncoding
-                                                    freeWhenDone: NO];
-        CTFontRef font = data->normalFont;
-        if (! data->blockQuoteAttributes) {
-            CGFloat indent = CTFontGetSize(font) * 2;
-            CTParagraphStyleSetting settings[] = {
-                { kCTParagraphStyleSpecifierFirstLineHeadIndent, sizeof(CGFloat), &indent },
-                { kCTParagraphStyleSpecifierHeadIndent,          sizeof(CGFloat), &indent },
-            };
-            CTParagraphStyleRef paragraphStyle = CTParagraphStyleCreate(settings, 1);
-            data->blockQuoteAttributes = @{           (NSString *) kCTFontAttributeName: (__bridge id) font,
-                                            (NSString *) kCTParagraphStyleAttributeName: (__bridge id) paragraphStyle };
-            CFRelease(paragraphStyle);
-        }
-        NSAttributedString *toAppend = [[NSAttributedString alloc] initWithString: rawStr
-                                                                       attributes: data->blockQuoteAttributes];
-        [str appendAttributedString: toAppend];
-    }
-}
-
-static void tt_header(struct buf *ob, struct buf *text, int level, void *opaque)
-{
-    struct tt_format_data *data = (struct tt_format_data *) opaque;
-    NSMutableAttributedString *str = data->str;
-    CTFontRef font = NULL;
-    switch(level) {
-        case 1:
-            if (!data->h1Font)
-                data->h1Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
-                                                                  CTFontGetSize(data->normalFont) + 8,
-                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
-            font = data->h1Font;
-            break;
-        case 2:
-            if (!data->h2Font)
-                data->h2Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
-                                                                  CTFontGetSize(data->normalFont) + 6,
-                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
-            font = data->h2Font;
-            break;
-        case 3:
-            if (!data->h3Font)
-                data->h3Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
-                                                                  CTFontGetSize(data->normalFont) + 4,
-                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
-            font = data->h3Font;
-            break;
-        case 4:
-            if (!data->h4Font)
-                data->h4Font = CTFontCreateCopyWithSymbolicTraits(data->normalFont,
-                                                                  CTFontGetSize(data->normalFont) + 2,
-                                                                  NULL, kCTFontBoldTrait, kCTFontBoldTrait);
-            font = data->h4Font;
-            break;
-    }
-    if (text && font) {
-        TT_APPEND_TEXT(str, text->data, text->size, font);
-    }
-    TT_APPEND(str, @"\n", data->normalFont);
-}
-
-static void tt_paragraph(struct buf *ob, struct buf *text, void *opaque)
-{
-    struct tt_format_data *data = (struct tt_format_data *) opaque;
-    NSMutableAttributedString *str = data->str;
-    if (ob->size) {
-        TT_APPEND(str, @"\n", data->normalFont);
-    }
-
-    if (text)
-        TT_APPEND_TEXT(str, text->data, text->size, data->normalFont);
-
-    TT_APPEND(str, @"\n", data->normalFont);
-}
-
-/* renderer structure */
-struct mkd_renderer to_textus = {
-    /* document-level callbacks */
-    NULL,
-    NULL,
-
-    /* block-level callbacks */
-    NULL,
-    tt_blockquote,
-    NULL,
-    tt_header,
-    NULL,
-    NULL,
-    NULL,
-    tt_paragraph,
-    NULL,
-    NULL,
-    NULL,
-
-    /* span-level callbacks */
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-
-    /* low-level callbacks */
-    NULL,
-    NULL,
-
-    /* renderer data */
-    64,
-    "*_",
-    NULL
-};
-
 - (void) formatDocument
 {
+#ifdef TT_MARKDOWN_SUPPORT
     struct buf *ib, *ob;
     ib = bufnew(self.rawfileContents.length);
     bufgrow(ib, self.rawfileContents.length);
@@ -372,6 +375,10 @@ struct mkd_renderer to_textus = {
     ob = bufnew(64);
     to_textus.opaque = &formatData;
     markdown(ob, ib, &to_textus);
+#else
+    fileContents = [[NSMutableAttributedString alloc] initWithString: self.rawfileContents
+                                                          attributes: self.attributesForText];
+#endif
 
     self.fileContentsInPlainText = [fileContents mutableString];
 }

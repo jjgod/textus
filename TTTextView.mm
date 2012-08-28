@@ -113,8 +113,9 @@
                 if (ch == 0xFF0C /* ， */ || ch == 0x3002 /* 。 */ ||
                     ch == 0x3001 /* 、 */ || ch == 0xFF01 /* ！ */ ||
                     ch == 0xFF1A /* ： */ || ch == 0xFF1B /* ； */ ||
-                    ch == 0x201D /* ” */  || ch == 0x201C /* “ */ ||
-                    ch == 0x300C /* 「 */ || ch == 0xFF1F /* ？ */) {
+                    ch == 0x201D /* ” */  || ch == 0x201C /* “ */  ||
+                    ch == 0x300C /* 「 */ || ch == 0xFF1F /* ？ */ ||
+                    ch == 0x300D /* 」 */) {
                     CFRelease(lineData.line);
                     length += (ch == 0x201C || ch == 0x300C) ? 1 : 2;
 

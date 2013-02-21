@@ -51,7 +51,7 @@
 {
     NSAttributedString *text = [document fileContents];
 
-    if (! text)
+    if (!text || ![text length])
         return;
 
     NSSize contentSize = [[self enclosingScrollView] contentSize];
@@ -232,7 +232,7 @@
         CTLineDraw(lineData.line, context);
     }
 
-    long percentage = roundtol(i * 100 / total);
+    long percentage = total ? roundtol(i * 100 / total) : 0;
     if (percentage) {
         statusField.integerValue = percentage;
         statusField.stringValue = [NSString stringWithFormat: @"%ld%%", percentage];

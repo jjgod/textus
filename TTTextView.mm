@@ -6,8 +6,11 @@
 //
 
 #import "TTTextView.h"
-#import "TTDocument.h"
+
 #include <sys/time.h>
+
+#import "TTDocument.h"
+#import "TTProgressView.h"
 
 #define kMaxLinesPerFrame     256
 #define MAX_LINES(total)      (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
@@ -44,7 +47,6 @@
 - (void) dealloc
 {
     [self removeAllLines];
-    [super dealloc];
 }
 
 - (void) invalidateLayout
@@ -55,7 +57,7 @@
         return;
 
     NSSize contentSize = [[self enclosingScrollView] contentSize];
-    CTFontRef font = (CTFontRef) [text attribute: (NSString *) kCTFontAttributeName
+    CTFontRef font = (__bridge CTFontRef) [text attribute: (NSString *) kCTFontAttributeName
                                          atIndex: 0
                                   effectiveRange: NULL];
     lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
@@ -78,7 +80,7 @@
 
 #ifdef JJ_CUSTOM_FRAMESETTER
     CGFloat fontSize = CTFontGetSize(font);
-    CFStringRef str = (CFStringRef) document.fileContentsInPlainText;
+    CFStringRef str = (__bridge CFStringRef) document.fileContentsInPlainText;
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString((CFAttributedStringRef) text);
     CFIndex start, length = 0;
     maxWidth = floor(frameRect.size.width / fontSize) * fontSize;
@@ -335,7 +337,7 @@
             CGFloat y = 0.0;
             if (i > 0) {
                 CGFloat height = textLines[i].origin.y - textLines[i - 1].origin.y;
-                CTFontRef font = (CTFontRef) [[document fileContents] attribute: (NSString *) kCTFontAttributeName
+                CTFontRef font = (__bridge CTFontRef) [[document fileContents] attribute: (NSString *) kCTFontAttributeName
                                                                         atIndex: 0
                                                                  effectiveRange: NULL];
                 CGFloat padding = (height - CTFontGetAscent(font) - CTFontGetDescent(font)) / 2;

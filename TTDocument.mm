@@ -77,8 +77,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 
 - (void) dealloc
 {
-    [fileContents release];
-    fileContents = nil;
 
     NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -87,7 +85,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
         [defaults removeObserver: self
                       forKeyPath: keyPath];
 
-    [super dealloc];
 }
 
 - (void) saveMetaData
@@ -136,7 +133,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 #define outputLine(output, line)           [output appendFormat: @"%@\n", line]
 #define outputParagraph(output, paragraph) do { \
 [output appendFormat: @"%@\n\n", paragraph]; \
-[paragraph release]; \
 paragraph = nil; \
 } while (0)
 
@@ -218,18 +214,14 @@ paragraph = nil; \
     if (! contents)
         return NO;
 
-    if (fileContents)
-        [fileContents release];
 
     NSMutableString *wrappedText = [[NSMutableString alloc] init];
     [self outputTo: wrappedText from: [contents stringByReplacingOccurrencesOfString: @"\r"
                                                                           withString: @""]];
     [self setFileContentsInPlainText: wrappedText];
-    [wrappedText release];
     // Remove DOS line endings
     fileContents = [[NSMutableAttributedString alloc] initWithString: self.fileContentsInPlainText
                                                           attributes: [self attributesForText]];
-    [contents release];
 
     NSArray *keys = [absoluteURL allXattrKeys];
     if ([keys containsObject: kLastReadLocationKey])

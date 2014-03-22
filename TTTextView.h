@@ -6,10 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "TTProgressView.h"
 #import <vector>
-
-using namespace std;
 
 typedef struct LineData {
     CTLineRef line;
@@ -17,11 +14,12 @@ typedef struct LineData {
 } JJLineData;
 
 @class TTDocument;
+@class TTProgressView;
 
 @interface TTTextView : NSView {
     NSSize textInset;
-    vector<JJLineData> textLines;
-    TTDocument *document;
+    std::vector<JJLineData> textLines;
+    TTDocument *__weak document;
     CGFloat lineHeight;
     CGFloat maxWidth;
     IBOutlet NSTextField *statusField;
@@ -29,7 +27,7 @@ typedef struct LineData {
 }
 
 @property (assign) NSSize textInset;
-@property (assign) TTDocument *document;
+@property (weak) TTDocument *document;
 
 - (void) invalidateLayout;
 - (void) scrollToLocation: (NSUInteger) location;

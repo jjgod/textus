@@ -28,8 +28,14 @@
     {
         textInset = NSMakeSize(50, 50);
         textLines.clear();
+
+        [self setWantsLayer:YES];
     }
     return self;
+}
+
+- (BOOL)isOpaque {
+    return YES;
 }
 
 - (void) removeAllLines
@@ -82,6 +88,7 @@
         CFRelease(font);
 
     _lineHeight *= [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
+    _lineHeight = ceil(_lineHeight);
 
     CGFloat scrollerWidth = [NSScroller isCompatibleWithOverlayScrollers] ? 0 : [NSScroller scrollerWidth];
     CGRect frameRect = CGRectMake(textInset.width, textInset.height,
@@ -150,7 +157,7 @@
                 lineData.line = justifiedLine;
             }
         }
-        lineData.origin.y = frameRect.origin.y + _fontAscent;
+        lineData.origin.y = ceil(frameRect.origin.y + _fontAscent);
         textLines.push_back(lineData);
         frameRect.origin.y += _lineHeight;
 
@@ -230,12 +237,16 @@
     // Initialize a graphics context and set the text matrix to a known value.
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
     CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
+    CGContextSetAllowsFontSmoothing(context, true);
+    CGContextSetShouldSmoothFonts(context, true);
 
     NSUInteger i, from, total = textLines.size();
     JJLineData lineData = { NULL, CGPointZero };
     CGFloat bottom = rect.origin.y + rect.size.height;
 
     // NSRectFill(NSMakeRect(textInset.width + maxWidth, rect.origin.y, 1.5, rect.size.height));
+    [[NSColor windowBackgroundColor] set];
+    NSRectFill(rect);
 
     from = [self lineBefore: rect.origin.y];
     NSUInteger firstLineInView = [self lineBefore: [[self enclosingScrollView] documentVisibleRect].origin.y] + 1;

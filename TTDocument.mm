@@ -122,8 +122,22 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 - (NSDictionary *) attributesForText
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *attributes = @{(NSString *) kCTFontAttributeName: [NSFont fontWithName: [defaults stringForKey: @"fontName"]
-                                                size: [defaults doubleForKey: @"fontSize"]]};
+    NSDictionary* descriptorAttributes = @{(NSString*) kCTFontNameAttribute: [defaults stringForKey: @"fontName"]};
+    CTFontDescriptorRef cjkDescriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef) descriptorAttributes);
+
+    CTFontDescriptorRef descriptor = cjkDescriptor;
+
+    // If "latinFontName" is set, use it as the primary font and leave the regular font as a fallback.
+    NSString* latinFontName = [defaults stringForKey: @"latinFontName"];
+    if (latinFontName) {
+        descriptorAttributes = @{(NSString*) kCTFontNameAttribute: [defaults stringForKey: @"latinFontName"],
+                                 (NSString*) kCTFontCascadeListAttribute: @[CFBridgingRelease(cjkDescriptor)]};
+        descriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef) descriptorAttributes);
+    }
+
+    CTFontRef font = CTFontCreateWithFontDescriptor(descriptor, [defaults doubleForKey: @"fontSize"], NULL);
+    CFRelease(descriptor);
+    NSDictionary *attributes = @{(NSString *) kCTFontAttributeName: CFBridgingRelease(font)};
     return attributes;
 }
 

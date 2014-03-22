@@ -57,12 +57,31 @@
         return;
 
     NSSize contentSize = [[self enclosingScrollView] contentSize];
-    CTFontRef font = (__bridge CTFontRef) [text attribute: (NSString *) kCTFontAttributeName
-                                         atIndex: 0
-                                  effectiveRange: NULL];
-    lineHeight = CTFontGetAscent(font) + CTFontGetDescent(font) + CTFontGetLeading(font);
-    lineHeight *= [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
-    CGFloat lineAscent = CTFontGetAscent(font);
+    CTFontRef font =
+        (__bridge CTFontRef) [text attribute: (NSString *) kCTFontAttributeName
+                                     atIndex: 0
+                              effectiveRange: NULL];
+    BOOL shouldReleaseFont = NO;
+    CGFloat fontSize = CTFontGetSize(font);
+    CTFontDescriptorRef descriptor = CTFontCopyFontDescriptor(font);
+    CFArrayRef cascadeList = (CFArrayRef) CTFontDescriptorCopyAttribute(descriptor, kCTFontCascadeListAttribute);
+    CFRelease(descriptor);
+    if (cascadeList) {
+        if (CFArrayGetCount(cascadeList)) {
+            descriptor = (CTFontDescriptorRef) CFArrayGetValueAtIndex(cascadeList, 0);
+            font = CTFontCreateWithFontDescriptor(descriptor, fontSize, NULL);
+            shouldReleaseFont = YES;
+        }
+        CFRelease(cascadeList);
+    }
+    _fontAscent = CTFontGetAscent(font);
+    _fontDescent = CTFontGetDescent(font);
+    _lineHeight = _fontAscent + _fontDescent + CTFontGetLeading(font);
+
+    if (shouldReleaseFont)
+        CFRelease(font);
+
+    _lineHeight *= [[NSUserDefaults standardUserDefaults] doubleForKey: @"lineHeight"];
 
     CGFloat scrollerWidth = [NSScroller isCompatibleWithOverlayScrollers] ? 0 : [NSScroller scrollerWidth];
     CGRect frameRect = CGRectMake(textInset.width, textInset.height,
@@ -79,7 +98,6 @@
 #endif
 
 #ifdef JJ_CUSTOM_FRAMESETTER
-    CGFloat fontSize = CTFontGetSize(font);
     CFStringRef str = (__bridge CFStringRef) document.fileContentsInPlainText;
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString((CFAttributedStringRef) text);
     CFIndex start, length = 0;
@@ -132,14 +150,14 @@
                 lineData.line = justifiedLine;
             }
         }
-        lineData.origin.y = frameRect.origin.y + lineAscent;
+        lineData.origin.y = frameRect.origin.y + _fontAscent;
         textLines.push_back(lineData);
-        frameRect.origin.y += lineHeight;
+        frameRect.origin.y += _lineHeight;
 
         // Add extra line here as paragraph spacing
         if (CFStringGetCharacterAtIndex(str, start + length - 1) == '\n') {
             // NSLog(@"%@", [document.fileContentsInPlainText substringWithRange: NSMakeRange(start, length)]);
-            frameRect.origin.y += lineHeight;
+            frameRect.origin.y += _lineHeight;
         }
     }
 
@@ -164,8 +182,8 @@
         for (i = 0; i < total; i++)
         {
             lineData.line = (CTLineRef) CFRetain(CFArrayGetValueAtIndex(lines, i));
-            lineData.origin = CGPointMake(frameRect.origin.x, y + lineAscent);
-            y += lineHeight;
+            lineData.origin = CGPointMake(frameRect.origin.x, y + _fontAscent);
+            y += _lineHeight;
             textLines.push_back(lineData);
         }
         frameRect.origin.y = y;
@@ -264,7 +282,7 @@
 - (BOOL) processKey: (int) ch
 {
     float y;
-    CGFloat pageHeight = [(NSScrollView *) [self superview] documentVisibleRect].size.height - lineHeight;
+    CGFloat pageHeight = [(NSScrollView *) [self superview] documentVisibleRect].size.height - _lineHeight;
 
     switch (ch)
     {
@@ -337,11 +355,8 @@
             CGFloat y = 0.0;
             if (i > 0) {
                 CGFloat height = textLines[i].origin.y - textLines[i - 1].origin.y;
-                CTFontRef font = (__bridge CTFontRef) [[document fileContents] attribute: (NSString *) kCTFontAttributeName
-                                                                        atIndex: 0
-                                                                 effectiveRange: NULL];
-                CGFloat padding = (height - CTFontGetAscent(font) - CTFontGetDescent(font)) / 2;
-                y = textLines[i].origin.y - CTFontGetAscent(font) - padding;
+                CGFloat padding = (height - _fontAscent - _fontDescent) / 2;
+                y = textLines[i].origin.y - _fontAscent - padding;
             }
             [self scrollTo: y];
             return;

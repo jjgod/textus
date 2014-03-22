@@ -20,7 +20,9 @@ typedef struct LineData {
     NSSize textInset;
     std::vector<JJLineData> textLines;
     TTDocument *__weak document;
-    CGFloat lineHeight;
+    CGFloat _lineHeight;
+    CGFloat _fontAscent;
+    CGFloat _fontDescent;
     CGFloat maxWidth;
     IBOutlet NSTextField *statusField;
     IBOutlet TTProgressView *progressView;

@@ -58,7 +58,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 
         linePrefixCharset = [NSCharacterSet characterSetWithCharactersInString: @"　 "];
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
+        NSArray *keyPaths = @[@"backgroundColor", @"lineHeight", @"fontName", @"fontSize"];
 
         for (NSString *keyPath in keyPaths)
             [defaults addObserver: self
@@ -78,7 +78,7 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 - (void) dealloc
 {
 
-    NSArray *keyPaths = [NSArray arrayWithObjects: @"backgroundColor", @"lineHeight", @"fontName", @"fontSize", nil];
+    NSArray *keyPaths = @[@"backgroundColor", @"lineHeight", @"fontName", @"fontSize"];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     for (NSString *keyPath in keyPaths)
@@ -122,11 +122,8 @@ NSStringEncoding detectedEncodingForData(NSData *data)
 - (NSDictionary *) attributesForText
 {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSFont fontWithName: [defaults stringForKey: @"fontName"]
-                                                size: [defaults doubleForKey: @"fontSize"]],
-                                (NSString *) kCTFontAttributeName,
-                                nil];
+    NSDictionary *attributes = @{(NSString *) kCTFontAttributeName: [NSFont fontWithName: [defaults stringForKey: @"fontName"]
+                                                size: [defaults doubleForKey: @"fontSize"]]};
     return attributes;
 }
 

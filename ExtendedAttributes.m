@@ -23,7 +23,7 @@
     int x;
     for (x = 0; x < dataSize; x++) {
         if (((char*)[listBuffer mutableBytes])[x] == 0) {
-            NSString* str = [NSString stringWithUTF8String: nameStart];
+            NSString* str = @(nameStart);
             nameStart = [listBuffer mutableBytes] + x + 1;
             [allKeys addObject: str];
         }

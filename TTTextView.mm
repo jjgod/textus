@@ -313,7 +313,7 @@
         int ch = [[event characters] characterAtIndex:characterIndex];
 
         if ([self processKey: ch] == NO)
-            [self interpretKeyEvents:[NSArray arrayWithObject:event]];
+            [self interpretKeyEvents:@[event]];
     }
 }
 

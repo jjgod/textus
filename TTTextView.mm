@@ -295,6 +295,7 @@
     float y;
     CGFloat pageHeight = [(NSScrollView *) [self superview] documentVisibleRect].size.height - _lineHeight;
 
+    [NSCursor setHiddenUntilMouseMoves:YES];
     switch (ch)
     {
         case NSDownArrowFunctionKey:

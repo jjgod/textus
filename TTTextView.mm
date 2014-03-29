@@ -8,6 +8,7 @@
 #import "TTTextView.h"
 
 #include <sys/time.h>
+#include <algorithm>
 
 #import "TTDocument.h"
 #import "TTProgressView.h"
@@ -16,6 +17,10 @@
 #define MAX_LINES(total)      (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
 #define JJ_CUSTOM_FRAMESETTER 1
 // #define TT_LAYOUT_TIMING      1
+
+bool compareLine(const JJLineData& line1, const JJLineData& line2) {
+    return line1.origin.y < line2.origin.y;
+}
 
 @implementation TTTextView
 
@@ -220,16 +225,17 @@
     return YES;
 }
 
-// Do a binary search to find the line requested
+// Do a binary search to find the line requested.
 - (NSUInteger) lineBefore: (CGFloat) y
 {
-    NSUInteger i;
+    JJLineData line;
+    line.line = NULL;
+    line.origin = CGPointMake(0, y);
 
-    for (i = 0; i < textLines.size(); i++)
-        if (textLines[i].origin.y > y)
-            return i == 0 ? 0 : i - 1;
+    auto lower = std::lower_bound(textLines.begin(), textLines.end(), line, compareLine);
+    NSUInteger value = lower - textLines.begin();
 
-    return i;
+    return value == 0 ? value : value - 1;
 }
 
 - (void) drawRect: (NSRect) rect

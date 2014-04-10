@@ -126,15 +126,6 @@ NSStringEncoding detectedEncodingForData(NSData *data)
     CTFontDescriptorRef cjkDescriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef) descriptorAttributes);
 
     CTFontDescriptorRef descriptor = cjkDescriptor;
-
-    // If "latinFontName" is set, use it as the primary font and leave the regular font as a fallback.
-    NSString* latinFontName = [defaults stringForKey: @"latinFontName"];
-    if (latinFontName) {
-        descriptorAttributes = @{(NSString*) kCTFontNameAttribute: [defaults stringForKey: @"latinFontName"],
-                                 (NSString*) kCTFontCascadeListAttribute: @[CFBridgingRelease(cjkDescriptor)]};
-        descriptor = CTFontDescriptorCreateWithAttributes((CFDictionaryRef) descriptorAttributes);
-    }
-
     CTFontRef font = CTFontCreateWithFontDescriptor(descriptor, [defaults doubleForKey: @"fontSize"], NULL);
     CFRelease(descriptor);
     NSDictionary *attributes = @{(NSString *) kCTFontAttributeName: CFBridgingRelease(font)};
@@ -233,6 +224,37 @@ paragraph = nil; \
     // Remove DOS line endings
     fileContents = [[NSMutableAttributedString alloc] initWithString: self.fileContentsInPlainText
                                                           attributes: [self attributesForText]];
+
+    // If "latinFontName" is set, use it as the primary font and leave the regular font as a fallback.
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *latinFontName = [defaults stringForKey: @"latinFontName"];
+    if (latinFontName) {
+	CGFloat fontSize = [defaults doubleForKey:@"fontSize"];
+	NSFont* latinFont = [NSFont fontWithName:latinFontName size:fontSize];
+	NSLinguisticTaggerOptions options =
+	    NSLinguisticTaggerOmitWhitespace |
+	    NSLinguisticTaggerOmitPunctuation |
+	    NSLinguisticTaggerJoinNames;
+	NSString *const scheme = NSLinguisticTagSchemeScript;
+	NSLinguisticTagger *tagger =
+	    [[NSLinguisticTagger alloc] initWithTagSchemes: @[scheme] options:options];
+	tagger.string = self.fileContentsInPlainText;
+	[tagger enumerateTagsInRange:NSMakeRange(0, [self.fileContentsInPlainText length])
+			      scheme:scheme
+			     options:options
+			  usingBlock:^(NSString *tag,
+				       NSRange tokenRange,
+				       NSRange sentenceRange,
+				       BOOL *stop) {
+	    if ([tag isEqualToString:@"Latn"]) {
+		NSString *token = [tagger.string substringWithRange:tokenRange];
+		NSLog(@"%@", token);
+		[fileContents addAttribute:(NSString*) kCTFontAttributeName
+				     value:latinFont
+				     range:tokenRange];
+	    }
+	}];
+    }
 
     NSArray *keys = [absoluteURL allXattrKeys];
     if ([keys containsObject: kLastReadLocationKey])

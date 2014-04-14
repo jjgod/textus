@@ -5,11 +5,9 @@
 //  Created by Jjgod Jiang on 3/16/09.
 //
 
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 
-@interface AppController : NSResponder {
-  NSMutableDictionary* bookmarksDictionary;
-}
+@interface AppController : NSResponder
 
 - (NSFont*)font;
 - (NSColor*)foregroundColor;

@@ -5,7 +5,7 @@
 //  Created by Jiang Jiang on 9/18/09.
 //
 
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 
 @interface NSURL (ExtendedAttributes)
 

@@ -11,10 +11,6 @@
 
 @interface TTDocument : NSDocument {
   IBOutlet TTTextView* textView;
-  NSMutableAttributedString* fileContents;
-  NSString* fileContentsInPlainText;
-  NSUInteger lastReadLocation;
-  NSCharacterSet* linePrefixCharset;
 }
 
 @property(strong) NSMutableAttributedString* fileContents;

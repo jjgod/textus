@@ -5,8 +5,8 @@
 //  Created by Jjgod Jiang on 2/16/09.
 //
 
-#import "AppController.h"
 #import "TTDocument.h"
+
 #import "ExtendedAttributes.h"
 #import "chardetect.h"
 #import "TTTextView.h"
@@ -44,7 +44,9 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
   return CFStringConvertEncodingToNSStringEncoding(cfenc);
 }
 
-@implementation TTDocument
+@implementation TTDocument {
+  NSCharacterSet* _linePrefixCharset;
+}
 
 @synthesize fileContents, fileContentsInPlainText;
 @synthesize lastReadLocation;
@@ -55,7 +57,7 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
     fileContents = nil;
     lastReadLocation = 0;
 
-    linePrefixCharset =
+    _linePrefixCharset =
         [NSCharacterSet characterSetWithCharactersInString:@"　 "];
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSArray* keyPaths =
@@ -135,7 +137,7 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
   } while (0)
 
 - (NSString*)firstLine:(NSString*)line {
-  line = [line stringByTrimmingCharactersInSet:linePrefixCharset];
+  line = [line stringByTrimmingCharactersInSet:_linePrefixCharset];
 
   // Align first line with “「 optically
   NSString* prefix = @"　　";

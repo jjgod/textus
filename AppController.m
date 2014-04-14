@@ -42,7 +42,9 @@ NSString* encodeColor(NSColor* color) {
 				    (int)([color blueComponent] * 255.0)];
 }
 
-@implementation AppController
+@implementation AppController {
+  NSMutableDictionary* _bookmarksDictionary;
+}
 
 + (void)initialize {
   NSMutableDictionary* appDefaults = [NSMutableDictionary dictionary];
@@ -54,7 +56,7 @@ NSString* encodeColor(NSColor* color) {
   [appDefaults setValue:@24.0 forKey:@"fontSize"];
   [appDefaults setValue:@1.1 forKey:@"lineHeight"];
   [appDefaults setValue:[NSMutableDictionary dictionaryWithCapacity:20]
-		 forKey:@"bookmarks"];
+                 forKey:@"bookmarks"];
 
   [defaults registerDefaults:appDefaults];
   [[NSUserDefaultsController sharedUserDefaultsController]
@@ -66,15 +68,15 @@ NSString* encodeColor(NSColor* color) {
   [[NSFontManager sharedFontManager] setSelectedFont:[self font] isMultiple:NO];
   // load bookmarks into dictionary and insert them into menu
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-  bookmarksDictionary = [[defaults dictionaryForKey:@"bookmarks"] mutableCopy];
-  if (!bookmarksDictionary)
-    bookmarksDictionary = [[NSMutableDictionary alloc] init];
+  _bookmarksDictionary = [[defaults dictionaryForKey:@"bookmarks"] mutableCopy];
+  if (!_bookmarksDictionary)
+    _bookmarksDictionary = [[NSMutableDictionary alloc] init];
 }
 
 - (NSFont*)font {
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
   return [NSFont fontWithName:[defaults stringForKey:@"fontName"]
-			 size:[defaults doubleForKey:@"fontSize"]];
+                         size:[defaults doubleForKey:@"fontSize"]];
 }
 
 - (NSColor*)foregroundColor {
@@ -85,7 +87,7 @@ NSString* encodeColor(NSColor* color) {
 
 - (void)setForegroundColor:(NSColor*)color {
   [[NSUserDefaults standardUserDefaults] setValue:encodeColor(color)
-					   forKey:@"foregroundColor"];
+                                           forKey:@"foregroundColor"];
 }
 
 - (NSColor*)backgroundColor {
@@ -96,7 +98,7 @@ NSString* encodeColor(NSColor* color) {
 
 - (void)setBackgroundColor:(NSColor*)color {
   [[NSUserDefaults standardUserDefaults] setValue:encodeColor(color)
-					   forKey:@"backgroundColor"];
+                                           forKey:@"backgroundColor"];
 }
 
 - (BOOL)applicationShouldOpenUntitledFile:(NSApplication*)sender {
@@ -136,21 +138,21 @@ NSString* encodeColor(NSColor* color) {
 - (IBAction)addBookmark:(id)sender {
   if ([NSApp keyWindow]) {
     TTTextView* textView =
-	[[[NSApp keyWindow].contentView subviews][0] documentView];
+      [[[NSApp keyWindow].contentView subviews][0] documentView];
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
 
     NSMutableArray* indexes =
-	bookmarksDictionary[textView.document.fileURL.path];
+      _bookmarksDictionary[textView.document.fileURL.path];
     if (!indexes) {
       indexes = [[NSMutableArray alloc] init];
-      bookmarksDictionary[textView.document.fileURL.path] = indexes;
+      _bookmarksDictionary[textView.document.fileURL.path] = indexes;
       [indexes addObject:@(textView.document.fileContents.length)];
     }
 
     NSNumber* location = @(textView.document.lastReadLocation);
     if (![indexes containsObject:location]) {
       [indexes addObject:location];
-      [defaults setObject:bookmarksDictionary forKey:@"bookmarks"];
+      [defaults setObject:_bookmarksDictionary forKey:@"bookmarks"];
     }
   }
 }

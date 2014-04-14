@@ -7,7 +7,9 @@
 
 #import "TTProgressView.h"
 
-@implementation TTProgressView
+@implementation TTProgressView {
+  NSPoint _currentPoint;
+}
 
 - (id)initWithFrame:(NSRect)frame {
   self = [super initWithFrame:frame];
@@ -33,7 +35,7 @@
 }
 
 - (void)mouseMoved:(NSEvent*)theEvent {
-  currentPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
+  _currentPoint = [self convertPoint:theEvent.locationInWindow fromView:nil];
   [self setNeedsDisplay:YES];
 }
 
@@ -55,7 +57,7 @@
       unread = true;
     }
     r = 3;
-    if (ABS(currentPoint.x - i * width) < 5)
+    if (ABS(_currentPoint.x - i * width) < 5)
       r = 6;
     // Create our circle path
     NSRect rect = NSMakeRect(i * width - r / 2, 8.5 - r / 2, r, r);

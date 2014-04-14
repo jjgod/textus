@@ -6,23 +6,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <vector>
-
-typedef struct LineData {
-  CTLineRef line;
-  CGPoint origin;
-} JJLineData;
 
 @class TTDocument;
 
 @interface TTTextView : NSView {
-  NSSize textInset;
-  std::vector<JJLineData> textLines;
-  TTDocument* __weak document;
-  CGFloat _lineHeight;
-  CGFloat _fontAscent;
-  CGFloat _fontDescent;
-  CGFloat maxWidth;
   IBOutlet NSTextField* statusField;
   IBOutlet NSView* progressView;
 }

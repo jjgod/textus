@@ -9,7 +9,6 @@
 
 @interface TTProgressView : NSView {
   IBOutlet NSTextField* statusField;
-  NSPoint currentPoint;
 }
 
 @end

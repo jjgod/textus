@@ -9,20 +9,29 @@
 
 #include <sys/time.h>
 #include <algorithm>
+#include <vector>
 
 #import "TTDocument.h"
-#import "TTProgressView.h"
 
-#define kMaxLinesPerFrame 256
-#define MAX_LINES(total) (total > kMaxLinesPerFrame ? kMaxLinesPerFrame : total)
 #define JJ_CUSTOM_FRAMESETTER 1
 // #define TT_LAYOUT_TIMING      1
 
-bool compareLine(const JJLineData& line1, const JJLineData& line2) {
+struct TTLineData {
+  CTLineRef line;
+  CGPoint origin;
+};
+
+bool compareLine(const TTLineData& line1, const TTLineData& line2) {
   return line1.origin.y < line2.origin.y;
 }
 
-@implementation TTTextView
+@implementation TTTextView {
+  std::vector<TTLineData> textLines;
+  CGFloat _lineHeight;
+  CGFloat _fontAscent;
+  CGFloat _fontDescent;
+  CGFloat _maxWidth;
+}
 
 @synthesize textInset;
 @synthesize document;
@@ -99,7 +108,7 @@ bool compareLine(const JJLineData& line1, const JJLineData& line2) {
                  contentSize.width - 2 * textInset.width - scrollerWidth,
                  contentSize.height - textInset.height);
 
-  JJLineData lineData = {NULL, CGPointMake(0, 0)};
+  TTLineData lineData = {NULL, CGPointMake(0, 0)};
 
   [self removeAllLines];
 
@@ -113,7 +122,7 @@ bool compareLine(const JJLineData& line1, const JJLineData& line2) {
   CTTypesetterRef typesetter =
       CTTypesetterCreateWithAttributedString((CFAttributedStringRef)text);
   CFIndex start, length = 0;
-  maxWidth = floor(frameRect.size.width / fontSize) * fontSize;
+  _maxWidth = floor(frameRect.size.width / fontSize) * fontSize;
   lineData.origin = frameRect.origin;
 
   for (start = 0; start < text.length; start += length) {
@@ -131,7 +140,7 @@ bool compareLine(const JJLineData& line1, const JJLineData& line2) {
         CTLineGetTypographicBounds(lineData.line, &ascent, &descent, &leading);
 
     CFIndex secondCharInNextLineIndex = start + length + 1;
-    if (width <= maxWidth - fontSize) {
+    if (width <= _maxWidth - fontSize) {
       if (secondCharInNextLineIndex < text.length) {
         UniChar ch =
             CFStringGetCharacterAtIndex(str, secondCharInNextLineIndex);
@@ -166,10 +175,10 @@ bool compareLine(const JJLineData& line1, const JJLineData& line2) {
     } else {
       // Otherwise we can't do optical punctuation or the beginning of a
       // paragraph, do justified line instead
-      if (width / maxWidth > 0.85 &&
+      if (width / _maxWidth > 0.85 &&
           CFStringGetCharacterAtIndex(str, start) != 0x3000) {
         CTLineRef justifiedLine =
-            CTLineCreateJustifiedLine(lineData.line, 1.0, maxWidth);
+            CTLineCreateJustifiedLine(lineData.line, 1.0, _maxWidth);
         CFRelease(lineData.line);
         lineData.line = justifiedLine;
       }
@@ -238,7 +247,7 @@ bool compareLine(const JJLineData& line1, const JJLineData& line2) {
 
 // Do a binary search to find the line requested.
 - (NSUInteger)lineBefore:(CGFloat)y {
-  JJLineData line;
+  TTLineData line;
   line.line = NULL;
   line.origin = CGPointMake(0, y);
 
@@ -258,10 +267,10 @@ bool compareLine(const JJLineData& line1, const JJLineData& line2) {
   CGContextSetShouldSmoothFonts(context, true);
 
   NSUInteger i, from, total = textLines.size();
-  JJLineData lineData = {NULL, CGPointZero};
+  TTLineData lineData = {NULL, CGPointZero};
   CGFloat bottom = rect.origin.y + rect.size.height;
 
-  // NSRectFill(NSMakeRect(textInset.width + maxWidth, rect.origin.y, 1.5,
+  // NSRectFill(NSMakeRect(textInset.width + _maxWidth, rect.origin.y, 1.5,
   // rect.size.height));
   [[NSColor windowBackgroundColor] set];
   NSRectFill(rect);

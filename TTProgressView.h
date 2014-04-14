@@ -4,13 +4,12 @@
 //
 //  Created by Jiang Jiang on 7/16/12.
 //
-//
 
-#import <Cocoa/Cocoa.h>
+@import Cocoa;
 
 @interface TTProgressView : NSView {
-    IBOutlet NSTextField *statusField;
-    NSPoint currentPoint;
+  IBOutlet NSTextField* statusField;
+  NSPoint currentPoint;
 }
 
 @end

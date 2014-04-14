@@ -8,13 +8,13 @@
 #import <Cocoa/Cocoa.h>
 
 @interface AppController : NSResponder {
-    NSMutableDictionary *bookmarksDictionary;
+  NSMutableDictionary* bookmarksDictionary;
 }
 
-- (NSFont *) font;
-- (NSColor *) foregroundColor;
-- (NSColor *) backgroundColor;
-- (IBAction) addBookmark: (id) sender;
-- (IBAction) gotoBookmark: (id) sender;
+- (NSFont*)font;
+- (NSColor*)foregroundColor;
+- (NSColor*)backgroundColor;
+- (IBAction)addBookmark:(id)sender;
+- (IBAction)gotoBookmark:(id)sender;
 
 @end

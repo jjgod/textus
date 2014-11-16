@@ -99,13 +99,10 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
       [[NSUserDefaults standardUserDefaults] doubleForKey:@"lineHeight"];
   _lineHeight = ceil(_lineHeight);
 
-  CGFloat scrollerWidth = [NSScroller isCompatibleWithOverlayScrollers]
-                                  ? 0
-                                  : [NSScroller scrollerWidth];
   CGRect frameRect =
       CGRectMake(textInset.width,
                  textInset.height,
-                 contentSize.width - 2 * textInset.width - scrollerWidth,
+                 contentSize.width - 2 * textInset.width,
                  contentSize.height - textInset.height);
 
   TTLineData lineData = {NULL, CGPointMake(0, 0)};

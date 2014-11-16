@@ -52,7 +52,7 @@ NSString* encodeColor(NSColor* color) {
 
   [appDefaults setValue:@"#000000" forKey:@"foregroundColor"];
   [appDefaults setValue:@"#FFFFFF" forKey:@"backgroundColor"];
-  [appDefaults setValue:@"STKaiti" forKey:@"fontName"];
+  [appDefaults setValue:@"STKaiti-SC-Regular" forKey:@"fontName"];
   [appDefaults setValue:@24.0 forKey:@"fontSize"];
   [appDefaults setValue:@1.1 forKey:@"lineHeight"];
   [appDefaults setValue:[NSMutableDictionary dictionaryWithCapacity:20]

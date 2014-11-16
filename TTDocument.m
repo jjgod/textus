@@ -75,7 +75,6 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
 }
 
 - (void)dealloc {
-
   NSArray* keyPaths =
       @[ @"backgroundColor", @"lineHeight", @"fontName", @"fontSize" ];
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
@@ -115,15 +114,10 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
 
 - (NSDictionary*)attributesForText {
   NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-  NSDictionary* descriptorAttributes =
-      @{(NSString*)kCTFontNameAttribute : [defaults stringForKey:@"fontName"]};
-  CTFontDescriptorRef cjkDescriptor = CTFontDescriptorCreateWithAttributes(
-      (CFDictionaryRef)descriptorAttributes);
-
-  CTFontDescriptorRef descriptor = cjkDescriptor;
-  CTFontRef font = CTFontCreateWithFontDescriptor(
-      descriptor, [defaults doubleForKey:@"fontSize"], NULL);
-  CFRelease(descriptor);
+  CTFontRef font =
+      CTFontCreateWithName((CFStringRef)[defaults stringForKey:@"fontName"],
+                           [defaults doubleForKey:@"fontSize"],
+                           NULL);
   NSDictionary* attributes =
       @{(NSString*)kCTFontAttributeName : CFBridgingRelease(font)};
   return attributes;
@@ -239,15 +233,12 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
                                    NSRange tokenRange,
                                    NSRange sentenceRange,
                                    BOOL* stop) {
-                          if ([tag isEqualToString:@"Latn"]) {
-                            NSString* token =
-                                [tagger.string substringWithRange:tokenRange];
-                            NSLog(@"%@", token);
-                            [fileContents
-                                addAttribute:(NSString*)kCTFontAttributeName
-                                       value:latinFont
-                                       range:tokenRange];
-                          }
+                        if (![tag hasPrefix:@"Han"]) {
+                          [fileContents
+                              addAttribute:(NSString*)kCTFontAttributeName
+                                     value:latinFont
+                                     range:tokenRange];
+                        }
                       }];
   }
 

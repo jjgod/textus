@@ -114,10 +114,10 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
   gettimeofday(&tv1, 0);
 #endif
 
+  CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedStringAndOptions((CFAttributedStringRef)text, (CFDictionaryRef)@{ (id)kCTTypesetterOptionAllowUnboundedLayout: @YES });
+
 #ifdef JJ_CUSTOM_FRAMESETTER
   CFStringRef str = (__bridge CFStringRef)document.fileContentsInPlainText;
-  CTTypesetterRef typesetter =
-      CTTypesetterCreateWithAttributedString((CFAttributedStringRef)text);
   CFIndex start, length = 0;
   _maxWidth = floor(frameRect.size.width / fontSize) * fontSize;
   lineData.origin = frameRect.origin;
@@ -192,11 +192,9 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
     }
   }
 
-  CFRelease(typesetter);
 #else
   // Create the framesetter with the attributed string.
-  CTFramesetterRef framesetter =
-      CTFramesetterCreateWithAttributedString((CFAttributedStringRef)text);
+  CTFramesetterRef framesetter = CTFramesetterCreateWithTypesetter(typesetter);
   CFRange range, frameRange;
 
   for (range = frameRange = CFRangeMake(0, 0); range.location < text.length;
@@ -223,6 +221,7 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
 
   CFRelease(framesetter);
 #endif
+  CFRelease(typesetter);
 
 #ifdef TT_LAYOUT_TIMING
   gettimeofday(&tv2, 0);

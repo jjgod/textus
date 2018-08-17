@@ -49,7 +49,7 @@
   CGFloat width = self.frame.size.width / 50;
   int i;
   CGFloat r;
-  int p = [statusField integerValue];
+  NSInteger p = [statusField integerValue];
   bool unread = false;
   for (i = 1; i < 50; i++) {
     if (p < i * 2 && !unread) {

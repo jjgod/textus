@@ -27,9 +27,7 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
 
   chardet_create(&chardetContext);
   chardet_reset(chardetContext);
-  chardet_handle_data(chardetContext,
-                      (const char*)[data bytes],
-                      [data length] > BUFSIZE ? BUFSIZE : [data length]);
+  chardet_handle_data(chardetContext, (const char*)[data bytes], [data length] > BUFSIZE ? BUFSIZE : (unsigned int)[data length]);
   chardet_data_end(chardetContext);
 
   ret = chardet_get_charset(chardetContext, charset, CHARDET_MAX_ENCODING_NAME);
@@ -234,7 +232,7 @@ NSStringEncoding detectedEncodingForData(NSData* data) {
                                    NSRange sentenceRange,
                                    BOOL* stop) {
                         if (![tag hasPrefix:@"Han"]) {
-                          [fileContents
+                          [self.fileContents
                               addAttribute:(NSString*)kCTFontAttributeName
                                      value:latinFont
                                      range:tokenRange];

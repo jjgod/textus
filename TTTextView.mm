@@ -257,8 +257,7 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
 
 - (void)drawRect:(NSRect)rect {
   // Initialize a graphics context and set the text matrix to a known value.
-  CGContextRef context =
-      (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+  CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] CGContext];
   CGContextSetTextMatrix(context, CGAffineTransformMakeScale(1, -1));
   CGContextSetAllowsFontSmoothing(context, true);
   CGContextSetShouldSmoothFonts(context, true);
@@ -288,7 +287,7 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
     CTLineDraw(lineData.line, context);
   }
 
-  long percentage = total ? roundtol(i * 100 / total) : 0;
+  long percentage = total ? lround(i * 100 / total) : 0;
   if (percentage) {
     statusField.integerValue = percentage;
     statusField.stringValue = [NSString stringWithFormat:@"%ld%%", percentage];
@@ -356,9 +355,7 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
 
 - (void)keyDown:(NSEvent*)event {
   int characterIndex;
-  int charactersInEvent;
-
-  charactersInEvent = [[event characters] length];
+  unsigned long charactersInEvent = [[event characters] length];
   for (characterIndex = 0; characterIndex < charactersInEvent;
        characterIndex++) {
     int ch = [[event characters] characterAtIndex:characterIndex];

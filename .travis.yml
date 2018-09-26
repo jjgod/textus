@@ -1,3 +1,4 @@
 language: objective-c
 xcode_project: Textus.xcodeproj
 xcode_scheme: Textus
+osx_image: xcode10

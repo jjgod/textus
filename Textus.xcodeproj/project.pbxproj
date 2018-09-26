@@ -437,6 +437,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.jjgod.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Textus;
 			};
@@ -456,6 +457,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.jjgod.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = Textus;
 			};

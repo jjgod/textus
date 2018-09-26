@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		071D72B4215BFAB5005B3C8B /* TextusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 071D72B3215BFAB5005B3C8B /* TextusTests.m */; };
 		0728CDEC102817BC0060E2F2 /* Textus.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0728CDEB102817BC0060E2F2 /* Textus.icns */; };
 		074880B610636E6900C91C75 /* ExtendedAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = 074880B510636E6900C91C75 /* ExtendedAttributes.m */; };
 		0759B50A12D66C7C00EDB373 /* chardetect.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0759B50912D66C7C00EDB373 /* chardetect.a */; };
@@ -22,7 +23,20 @@
 		8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		071D72B6215BFAB5005B3C8B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A37F4A9FDCFA73011CA2CEA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D15AC270486D014006FF6A4;
+			remoteInfo = Textus;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		071D72B1215BFAB5005B3C8B /* TextusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TextusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		071D72B3215BFAB5005B3C8B /* TextusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TextusTests.m; sourceTree = "<group>"; };
+		071D72B5215BFAB5005B3C8B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0728CDEB102817BC0060E2F2 /* Textus.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Textus.icns; sourceTree = "<group>"; };
 		073CCBC221274FB700C7D26A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/TTDocument.xib; sourceTree = "<group>"; };
 		073CCBC321274FB700C7D26A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -50,6 +64,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		071D72AE215BFAB5005B3C8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC330486D014006FF6A4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -62,6 +83,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		071D72B2215BFAB5005B3C8B /* TextusTests */ = {
+			isa = PBXGroup;
+			children = (
+				071D72B3215BFAB5005B3C8B /* TextusTests.m */,
+				071D72B5215BFAB5005B3C8B /* Info.plist */,
+			);
+			path = TextusTests;
+			sourceTree = "<group>";
+		};
 		1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -85,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				8D15AC370486D014006FF6A4 /* Textus.app */,
+				071D72B1215BFAB5005B3C8B /* TextusTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,6 +126,7 @@
 				2A37F4ABFDCFA73011CA2CEA /* Classes */,
 				2A37F4AFFDCFA73011CA2CEA /* Other Sources */,
 				2A37F4B8FDCFA73011CA2CEA /* Resources */,
+				071D72B2215BFAB5005B3C8B /* TextusTests */,
 				2A37F4C3FDCFA73011CA2CEA /* Frameworks */,
 				19C28FB0FE9D524F11CA2CBB /* Products */,
 			);
@@ -152,6 +184,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		071D72B0215BFAB5005B3C8B /* TextusTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 071D72BA215BFAB5005B3C8B /* Build configuration list for PBXNativeTarget "TextusTests" */;
+			buildPhases = (
+				071D72AD215BFAB5005B3C8B /* Sources */,
+				071D72AE215BFAB5005B3C8B /* Frameworks */,
+				071D72AF215BFAB5005B3C8B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				071D72B7215BFAB5005B3C8B /* PBXTargetDependency */,
+			);
+			name = TextusTests;
+			productName = TextusTests;
+			productReference = 071D72B1215BFAB5005B3C8B /* TextusTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		8D15AC270486D014006FF6A4 /* Textus */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Textus" */;
@@ -178,6 +228,13 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastUpgradeCheck = 1000;
+				TargetAttributes = {
+					071D72B0215BFAB5005B3C8B = {
+						CreatedOnToolsVersion = 10.0;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 8D15AC270486D014006FF6A4;
+					};
+				};
 			};
 			buildConfigurationList = C05733CB08A9546B00998B17 /* Build configuration list for PBXProject "Textus" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -195,11 +252,19 @@
 			projectRoot = "";
 			targets = (
 				8D15AC270486D014006FF6A4 /* Textus */,
+				071D72B0215BFAB5005B3C8B /* TextusTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		071D72AF215BFAB5005B3C8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC2B0486D014006FF6A4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -215,6 +280,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		071D72AD215BFAB5005B3C8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				071D72B4215BFAB5005B3C8B /* TextusTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D15AC300486D014006FF6A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -229,6 +302,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		071D72B7215BFAB5005B3C8B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8D15AC270486D014006FF6A4 /* Textus */;
+			targetProxy = 071D72B6215BFAB5005B3C8B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C165FFE840EACC02AAC07 /* InfoPlist.strings */ = {
@@ -266,6 +347,81 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		071D72B8215BFAB5005B3C8B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = TextusTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.TextusTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Textus.app/Contents/MacOS/Textus";
+			};
+			name = Debug;
+		};
+		071D72B9215BFAB5005B3C8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = TextusTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.apple.TextusTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Textus.app/Contents/MacOS/Textus";
+			};
+			name = Release;
+		};
 		C05733C808A9546B00998B17 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -382,6 +538,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		071D72BA215BFAB5005B3C8B /* Build configuration list for PBXNativeTarget "TextusTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				071D72B8215BFAB5005B3C8B /* Debug */,
+				071D72B9215BFAB5005B3C8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C05733C708A9546B00998B17 /* Build configuration list for PBXNativeTarget "Textus" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

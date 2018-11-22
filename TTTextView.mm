@@ -105,7 +105,12 @@ bool compareLine(const TTLineData& line1, const TTLineData& line2) {
     gettimeofday(&tv1, 0);
 #endif
 
-    CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedStringAndOptions((CFAttributedStringRef)text, (CFDictionaryRef)@{ (id)kCTTypesetterOptionAllowUnboundedLayout: @YES });
+	NSDictionary *options = nil;
+	if (@available(macOS 10.14, *)) {
+		options = @{ (id)kCTTypesetterOptionAllowUnboundedLayout: @YES };
+	}
+
+    CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedStringAndOptions((CFAttributedStringRef)text, (CFDictionaryRef)options);
 
 #ifdef JJ_CUSTOM_FRAMESETTER
     CFStringRef str = (__bridge CFStringRef)document.fileContentsInPlainText;
